@@ -1,5 +1,57 @@
 import pygame
+from ammo import AMMO
 
+class NAVICELLA:
+    
+    def __init__(self, screen, img, size, posx ,posy, actposx, actposy, speed = 7) -> None:
+        
+        #variabili visive
+        self.screen = screen
+        self.img = img
+        self.size = size
+        
+        #variabili Cinematica
+        self.posx = posx
+        self.posy = posy
+        self.actposx = actposx
+        self.actposy = actposy
+        self.speed = speed
+        
+    def move(self):
+        cont = 0
+        if self.actposx < self.posx:
+            while self.actposx != self.posx and cont != self.speed:
+                self.actposx = self.actposx + 1
+                cont += 1
+        elif self.actposx > self.posx:
+            while self.actposx != self.posx and cont != self.speed:
+                self.actposx = self.actposx - 1
+                cont += 1
+        
+        cont = 0
+        if self.actposy < self.posy:
+            while self.actposy != self.posy and cont != self.speed:
+                self.actposy = self.actposy + 1
+                cont += 1
+        elif self.actposy > self.posy:
+            while self.actposy != self.posy and cont != self.speed:
+                self.actposy = self.actposy - 1
+                cont += 1
+            
+        # print(self.actposx, self.actposy)
+        
+    def draw(self):
+        self.img = pygame.transform.scale(self.img, self.size)
+        
+        self.move()
+        self.screen.blit(self.img, (self.actposx, self.actposy))
+        
+    def shot(self):
+        ammo_img = pygame.image.load("immagini/navicella.png")
+        pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
+        pro.draw()
+        
+        
 # class Nemici:
 #     def __init__(self, screen, pos, size) -> None:
 #         self.screen = screen
