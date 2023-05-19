@@ -3,7 +3,7 @@ from ammo import AMMO
 
 class NAVICELLA:
     
-    def __init__(self, screen, img, size, posx ,posy, actposx, actposy, speed = 7) -> None:
+    def __init__(self, screen, img, size, posx ,posy, actposx, actposy, speed = 7, muniz =[]) -> None:
         
         #variabili visive
         self.screen = screen
@@ -16,6 +16,9 @@ class NAVICELLA:
         self.actposx = actposx
         self.actposy = actposy
         self.speed = speed
+        
+        #variabili di funzione
+        self.muniz=muniz
         
     def move(self):
         cont = 0
@@ -45,12 +48,24 @@ class NAVICELLA:
         
         self.move()
         self.screen.blit(self.img, (self.actposx, self.actposy))
+        for i,proiettile in enumerate(self.muniz):
+            # ammo_img = pygame.image.load("immagini/navicella.png")
+            # pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
+            # pro.draw()
+            if proiettile.posx > 480*2 or proiettile.posx <0 or proiettile.posy >272*2 or proiettile.posy < 0:
+                self.muniz.pop(i)
+            else:
+                proiettile.draw()
         
     def shot(self):
-        ammo_img = pygame.image.load("immagini/navicella.png")
-        pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
-        pro.draw()
+        if len(self.muniz) <= 25:
+            ammo_img = pygame.image.load("immagini/proiettile.png")
+            pro = AMMO(self.screen,ammo_img, (50, 25), self.actposx, self.actposy)
+            self.muniz.append(pro)
+        else:
+            pass
         
+
         
 # class Nemici:
 #     def __init__(self, screen, pos, size) -> None:

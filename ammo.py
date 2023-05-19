@@ -13,11 +13,11 @@ class AMMO:
         self.speed = speed
         
     def move(self):
-        self.posy += self.speed
+        self.posy -= self.speed
         
         
     def draw(self):
-        # self.img = pygame.transform.scale(self.img, (10,5))
-        # self.move
-        # self.screen.blit(self.img, (self.posx, self.posy))
+        self.img = pygame.transform.scale(self.img, self.size)
+        self.move()
+        self.screen.blit(self.img, (self.posx, self.posy))
         pass

@@ -2,7 +2,7 @@
 from os import system
 system("cls")
 
-
+import string
 from navicella import NAVICELLA
 
 import pygame, sys
@@ -19,6 +19,23 @@ screen = pygame.display.set_mode(window_size, 0, 32)
 pygame.display.set_caption('Zty.pe')
 
 clock = pygame.time.Clock()
+fps = 60
+timer = 333333
+
+def action(nav):
+    global timer
+    # for event in pygame.event.get():
+    #     print(pygame.event.get())
+    for key in alph:
+        if pygame.key.get_pressed()[key]:
+
+            
+            if timer < 7:
+                timer+=1
+            else:
+                nav.shot()
+                timer = 0
+            
 
 # nemici = Nemici(screen, (100, 100), (50, 50))
 
@@ -37,6 +54,11 @@ n = NAVICELLA(screen, immagine_navicella, (50,50), window_size[0]/2, window_size
 #controllo del mouse
 pygame.mouse.set_visible(True)
 
+#alfabeto
+alph = [i for i in range(96,123)]
+# print(alph)
+
+# pygame.event.set_blocked(pygame.MOUSEMOTION)
 while True:
     # gestione inputs
     for event in pygame.event.get():
@@ -54,14 +76,12 @@ while True:
 
     screen.blit(sfondo_immagine, (0,0))
     
+    
+    action(n)
+            
+
     n.draw()
-    
-    
-    
-    
-    if pygame.key.get_pressed()[pygame.K_z]:
-        n.shot()
     # nemici.draw()
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(fps)
 
