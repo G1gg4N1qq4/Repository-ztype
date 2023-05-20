@@ -2,9 +2,8 @@
 from os import system
 system("cls")
 
-import string
 from navicella import NAVICELLA
-
+from nemici import NEMICI
 import pygame, sys
 from pygame.locals import *
 # from nemici import Nemici
@@ -17,7 +16,7 @@ window_size = (480*2, 272*2)
 screen = pygame.display.set_mode(window_size, 0, 32)
 
 pygame.display.set_caption('Zty.pe')
-
+font = pygame.font.SysFont(pygame.font.get_default_font(),int(window_size[1]), bold = True, italic = False)
 clock = pygame.time.Clock()
 fps = 60
 timer = 333333
@@ -49,7 +48,7 @@ pos = pygame.mouse.get_pos()
 posx = pos[0]
 posy = pos[1]
 n = NAVICELLA(screen, immagine_navicella, (50,50), window_size[0]/2, window_size[1]/2, posx, posy)
-
+nem = NEMICI(screen, (window_size[0]/10, window_size[1]/10))
 
 #controllo del mouse
 pygame.mouse.set_visible(True)
@@ -78,9 +77,13 @@ while True:
     
     
     action(n)
-            
+    
 
     n.draw()
+    
+    #azione nemico
+    nem.aggiungi_parola()
+    nem.draw()
     # nemici.draw()
     pygame.display.flip()
     clock.tick(fps)
