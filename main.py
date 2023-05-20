@@ -1,6 +1,7 @@
 
 from os import system
 system("cls")
+import random
 
 from navicella import NAVICELLA
 from nemici import NEMICI
@@ -21,7 +22,7 @@ clock = pygame.time.Clock()
 fps = 60
 timer = 333333
 
-def action(nav):
+def action(nav, nemici):
     global timer
     # for event in pygame.event.get():
     #     print(pygame.event.get())
@@ -32,7 +33,11 @@ def action(nav):
             if timer < 7:
                 timer+=1
             else:
-                nav.shot()
+                nav.shot(nemici)
+                for i,nemico in enumerate(nemici.actword):
+                    if pygame.Rect.colliderect(n.shape,nemico.shape):
+                        nemici.colpito(i)
+                        nav.colpita()
                 timer = 0
             
 
@@ -47,7 +52,8 @@ immagine_navicella = pygame.image.load('immagini/navicella.png')
 pos = pygame.mouse.get_pos()
 posx = pos[0]
 posy = pos[1]
-n = NAVICELLA(screen, immagine_navicella, (50,50), window_size[0]/2, window_size[1]/2, posx, posy)
+n = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
+              window_size[0]/2, window_size[1]/2, posx, posy)
 nem = NEMICI(screen, (window_size[0]/20, window_size[1]/20))
 
 #controllo del mouse
@@ -66,20 +72,24 @@ while True:
             sys.exit()
 
     # keys = pygame.key.get_pressed()
-    
-    pos = pygame.mouse.get_pos()
-    posx = pos[0]
-    posy = pos[1]
-    n.posx = (posx - n.size[0]/2)
-    n.posy = (posy - n.size[1]/2)
+    if not n.bloccato:
+        pos = pygame.mouse.get_pos()
+        posx = pos[0]
+        posy = pos[1]
+        n.posx = (posx - n.size[0]/2)
+        n.posy = (posy - n.size[1]/2)
 
+        
+        
+        action(n,nem)
+    else:
+        n.img = pygame.image.load("immagini/Exp.png")
+    
     screen.blit(sfondo_immagine, (0,0))
-    
-    
-    action(n)
-    
 
-    n.draw()
+
+    
+    n.draw(nem)
     
     #azione nemico
     nem.aggiungi_parola()

@@ -51,19 +51,25 @@ class NEMICI:
                         self.counter -= 1
                 # print(parol.posy)
             else: 
-                parol.draw((0, 4))
+                parol.draw((0, 0))
                 # print(parol.scritta)
                 img = font.render(parol.scritta, True, (200,200,200), None)
                 img = pygame.transform.scale(img,self.size)
                 self.screen.blit(img,(parol.posx, parol.posy))
+                
+    
+    def colpito(self,i):
+        self.actword.pop(i)
+        self.counter -=1
 
 class parola:
-    def __init__(self, screen, scritta, posx, posy,speed = 5) -> None:
+    def __init__(self, screen, scritta, posx, posy, shape = pygame.rect.Rect(0, 0, 50, 50),
+                 speed = 0.3) -> None:
         
         #variabili display
         self.screen = screen
         self.scritta = scritta
-        
+        self.shape = shape
         #variabili cinematica
         self.posx = posx
         self.posy = posy
@@ -74,7 +80,7 @@ class parola:
         #extspeed è la velocità del proiettile
         self.posx = self.posx - extspeed[0]
         self.posy = self.posy + self.speed - extspeed[1]
-
+        self.shape = pygame.rect.Rect(self.posx, self.posy, 50, 50)
         
     def draw(self, extspeed):
         self.move(extspeed)

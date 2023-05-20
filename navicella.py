@@ -1,9 +1,11 @@
 import pygame
+import random
+import math
 from ammo import AMMO
 
 class NAVICELLA:
     
-    def __init__(self, screen, img, size, posx ,posy, actposx, actposy, speed = 7, muniz =[]) -> None:
+    def __init__(self, screen, img,size, shape, posx ,posy, actposx=480, actposy=272*2, speed = 7, muniz =[], bloccato = False) -> None:
         
         #variabili visive
         self.screen = screen
@@ -19,6 +21,8 @@ class NAVICELLA:
         
         #variabili di funzione
         self.muniz=muniz
+        self.shape = shape
+        self.bloccato = bloccato
         
     def move(self):
         cont = 0
@@ -41,30 +45,68 @@ class NAVICELLA:
                 self.actposy = self.actposy - 1
                 cont += 1
             
+        self.shape = pygame.rect.Rect(self.actposx - self.size[0]/2, self.actposy - self.size[1]/2, 
+                                        self.size[0], self.size[1])
         # print(self.actposx, self.actposy)
         
-    def draw(self):
+    def draw(self, nem):
         self.img = pygame.transform.scale(self.img, self.size)
         
         self.move()
+        if len(nem.actword) >0:
+            self.mira(nem)
         self.screen.blit(self.img, (self.actposx, self.actposy))
         for i,proiettile in enumerate(self.muniz):
             # ammo_img = pygame.image.load("immagini/navicella.png")
             # pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
             # pro.draw()
+            if pygame.Rect.collidepoint(nem.actword[proiettile.parola_agganciata].shape, proiettile.posx,proiettile.posy):
+                self.muniz.pop(i)
+                for i, nemico in enumerate(nem.actword):
+                    if nemico.scritta == nem.actword[proiettile.parola_agganciata].scritta:
+                        nem.colpito(i)
             if proiettile.posx > 480*2 or proiettile.posx <0 or proiettile.posy >272*2 or proiettile.posy < 0:
                 self.muniz.pop(i)
             else:
                 proiettile.draw()
         
-    def shot(self):
+    def shot(self, nem):
         if len(self.muniz) <= 25:
+
             ammo_img = pygame.image.load("immagini/proiettile.png")
-            pro = AMMO(self.screen,ammo_img, (50, 25), self.actposx, self.actposy)
+            
+            quale = random.choice(nem.actword)
+            aggancio = 0
+            for i, parola in enumerate(nem.actword):
+
+                if parola.scritta == quale.scritta:
+                    aggancio = i - 1 
+                    break
+            
+            pro = AMMO(self.screen,ammo_img, (50, 25), self.actposx, self.actposy, aggancio, [self.actposx, self.actposy])
             self.muniz.append(pro)
         else:
             pass
-        
+    
+    
+    def mira(self, nemici):
+        for proiettile in self.muniz:
+            if proiettile.posx < nemici.actword[proiettile.parola_agganciata].posx:
+                proiettile.direction[0] = (nemici.actword[proiettile.parola_agganciata].posx - proiettile.posx)
+            else:
+                proiettile.direction[0] = (proiettile.posx - nemici.actword[proiettile.parola_agganciata].posx)
+            
+            if proiettile.posy < nemici.actword[proiettile.parola_agganciata].posy :
+                proiettile.direction[1] = (nemici.actword[proiettile.parola_agganciata].posy - proiettile.posy)
+            else:
+                proiettile.direction[1] = (proiettile.posy - nemici.actword[proiettile.parola_agganciata].posy)
+                
+            # proiettile.ruota(nemici.actword[proiettile.parola_agganciata])
+        else:
+            pass
+            
+    def colpita(self):
+        self.bloccato = True
 
         
 # class Nemici:
