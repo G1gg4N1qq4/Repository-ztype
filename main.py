@@ -48,7 +48,7 @@ pos = pygame.mouse.get_pos()
 posx = pos[0]
 posy = pos[1]
 n = NAVICELLA(screen, immagine_navicella, (50,50), window_size[0]/2, window_size[1]/2, posx, posy)
-nem = NEMICI(screen, (window_size[0]/10, window_size[1]/10))
+nem = NEMICI(screen, (window_size[0]/20, window_size[1]/20))
 
 #controllo del mouse
 pygame.mouse.set_visible(True)
