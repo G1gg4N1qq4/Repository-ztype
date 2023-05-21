@@ -5,7 +5,7 @@ from ammo import AMMO
 
 class NAVICELLA:
     
-    def __init__(self, screen, img,size, shape, posx ,posy, actposx=480, actposy=272*2, speed = 7, muniz =[], bloccato = False) -> None:
+    def __init__(self, screen, img,size, shape, posx ,posy,speed = 7, muniz =[], bloccato = False) -> None:
         
         #variabili visive
         self.screen = screen
@@ -15,8 +15,8 @@ class NAVICELLA:
         #variabili Cinematica
         self.posx = posx
         self.posy = posy
-        self.actposx = actposx
-        self.actposy = actposy
+        # self.actposx = actposx
+        # self.actposy = actposy
         self.speed = speed
         
         #variabili di funzione
@@ -24,38 +24,38 @@ class NAVICELLA:
         self.shape = shape
         self.bloccato = bloccato
         
-    def move(self):
-        cont = 0
-        if self.actposx < self.posx:
-            while self.actposx != self.posx and cont != self.speed:
-                self.actposx = self.actposx + 1
-                cont += 1
-        elif self.actposx > self.posx:
-            while self.actposx != self.posx and cont != self.speed:
-                self.actposx = self.actposx - 1
-                cont += 1
+    # def move(self):
+    #     cont = 0
+    #     if self.actposx < self.posx:
+    #         while self.actposx != self.posx and cont != self.speed:
+    #             self.actposx = self.actposx + 1
+    #             cont += 1
+    #     elif self.actposx > self.posx:
+    #         while self.actposx != self.posx and cont != self.speed:
+    #             self.actposx = self.actposx - 1
+    #             cont += 1
         
-        cont = 0
-        if self.actposy < self.posy:
-            while self.actposy != self.posy and cont != self.speed:
-                self.actposy = self.actposy + 1
-                cont += 1
-        elif self.actposy > self.posy:
-            while self.actposy != self.posy and cont != self.speed:
-                self.actposy = self.actposy - 1
-                cont += 1
+    #     cont = 0
+    #     if self.actposy < self.posy:
+    #         while self.actposy != self.posy and cont != self.speed:
+    #             self.actposy = self.actposy + 1
+    #             cont += 1
+    #     elif self.actposy > self.posy:
+    #         while self.actposy != self.posy and cont != self.speed:
+    #             self.actposy = self.actposy - 1
+    #             cont += 1
             
-        self.shape = pygame.rect.Rect(self.actposx - self.size[0]/2, self.actposy - self.size[1]/2, 
-                                        self.size[0], self.size[1])
-        # print(self.actposx, self.actposy)
+    #     self.shape = pygame.rect.Rect(self.actposx - self.size[0]/2, self.actposy - self.size[1]/2, 
+    #                                     self.size[0], self.size[1])
+    #     # print(self.actposx, self.actposy)
         
     def draw(self, nem):
         self.img = pygame.transform.scale(self.img, self.size)
         
-        self.move()
+        # self.move()
         if len(nem.actword) >0:
             self.mira(nem)
-        self.screen.blit(self.img, (self.actposx, self.actposy))
+        self.screen.blit(self.img, (self.posx, self.posy))
         for i,proiettile in enumerate(self.muniz):
             # ammo_img = pygame.image.load("immagini/navicella.png")
             # pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
@@ -112,8 +112,8 @@ class NAVICELLA:
                         break
             
             # print(chr(key), quale.scritta[0])
-            pro = AMMO(self.screen,ammo_img, (50, 25), self.actposx, self.actposy, chr(key), aggancio,
-                       [self.actposx - nem.actword[aggancio].actposx, self.actposy - nem.actword[aggancio].actposy])
+            pro = AMMO(self.screen,ammo_img, (50, 25), self.posx, self.posy, chr(key), aggancio,
+                       [self.posx - nem.actword[aggancio].actposx, self.posy - nem.actword[aggancio].actposy])
             
             self.muniz.append(pro)
         else:
@@ -137,6 +137,18 @@ class NAVICELLA:
             
         else:
             pass
+        
+    def centrata(self, nem):
+        # if(nem.actword[self.parola_agganciata].actposx - self.posx) <= nem.size[0]:
+        #     if(nem.actword[self.parola_agganciata].actposx - self.posx) >= -nem.size[0]:
+        #         return True 
+        
+        if(nem.actposy - self.posy) >= - (self.size[1] - 10):
+            if(nem.actposy - self.posy) <= (self.size[1] - 10):
+                
+                if(nem.actposx - self.posx) >= - (self.size[0] - 10):
+                    if(nem.actposx - self.posx) <= (self.size[0] - 10):
+                        return True
             
     def colpita(self):
         self.bloccato = True

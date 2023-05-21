@@ -69,8 +69,8 @@ def reset(navicella, nemici, destra):
     
     if not destra:
         navicella = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
-                    window_size[0]/2, window_size[1]/2, posx, posy)
-        nemici = NEMICI(screen, (window_size[0]/30, window_size[1]/40))
+                    window_size[0]/2 - 50, window_size[1] - 100)
+        nemici = NEMICI(screen, (window_size[0]/30, window_size[1]/40) ,(posx,posy))
         return navicella, nemici
     else:
         pygame.quit()
@@ -84,11 +84,11 @@ sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
 #set navicella
 immagine_navicella = pygame.image.load('immagini/navicella.png')
 # pos = pygame.mouse.get_pos()
-posx = window_size[0]/2
+posx = window_size[0]/2 - 50
 posy = window_size[1] - 100
 n = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
-              window_size[0]/2, window_size[1]/2, posx, posy)
-nem = NEMICI(screen, (window_size[0]/30, window_size[1]/40))
+              posx, posy)
+nem = NEMICI(screen, (window_size[0]/30, window_size[1]/40), (n.posx, n.posy))
 
 #controllo del mouse
 pygame.mouse.set_visible(True)
@@ -109,14 +109,9 @@ while True:
 
     # keys = pygame.key.get_pressed()
     if not n.bloccato:
-        pos = pygame.mouse.get_pos()
-        posx = pos[0]
-        posy = pos[1]
-        n.posx = (posx - n.size[0]/2)
-        n.posy = (posy - n.size[1]/2)
 
         for i,nemico in enumerate(nem.actword):
-            if pygame.Rect.colliderect(n.shape,nemico.shape):
+            if n.centrata(nemico):
                 n.draw(nem)
                 n.colpita()
         
