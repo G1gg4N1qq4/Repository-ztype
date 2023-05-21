@@ -60,30 +60,61 @@ class NAVICELLA:
             # ammo_img = pygame.image.load("immagini/navicella.png")
             # pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
             # pro.draw()
-            if pygame.Rect.collidepoint(nem.actword[proiettile.parola_agganciata].shape, proiettile.posx,proiettile.posy):
+            
+            # if pygame.Rect.collidepoint(nem.actword[proiettile.parola_agganciata].shape, proiettile.posx,proiettile.posy):
+            if (proiettile.centrato(nem)):
                 self.muniz.pop(i)
                 for i, nemico in enumerate(nem.actword):
+                    # print(nem.actword[proiettile.parola_agganciata].scritta, nemico.scritta)
+                    
                     if nemico.scritta == nem.actword[proiettile.parola_agganciata].scritta:
-                        nem.colpito(i)
+                        
+                        nem.colpito(i, proiettile.key)
+                        nem.actword[proiettile.parola_agganciata].draw(proiettile.direction)
             if proiettile.posx > 480*2 or proiettile.posx <0 or proiettile.posy >272*2 or proiettile.posy < 0:
                 self.muniz.pop(i)
             else:
                 proiettile.draw()
         
-    def shot(self, nem):
+    def shot(self, nem, key):
+        lettera_presente = False
+        for parola in nem.actword:
+            # print(chr(key), parola.scritta[0])
+            if chr(key) == parola.scritta[0]:
+                lettera_presente = True
+                break
+        
+        if not lettera_presente:
+            return False
         if len(self.muniz) <= 25:
 
             ammo_img = pygame.image.load("immagini/proiettile.png")
             
             quale = random.choice(nem.actword)
             aggancio = 0
+            #converto la parola agganciata al suo index
             for i, parola in enumerate(nem.actword):
 
-                if parola.scritta == quale.scritta:
-                    aggancio = i - 1 
+                if parola.scritta[0] == chr(key):
+                    aggancio = i 
                     break
             
-            pro = AMMO(self.screen,ammo_img, (50, 25), self.actposx, self.actposy, aggancio, [self.actposx, self.actposy])
+            while chr(key) != quale.scritta[0]:
+                quale = random.choice(nem.actword)
+                aggancio = 0
+    
+                for i, parola in enumerate(nem.actword):
+
+                    if parola.scritta[0] == chr(key):
+                        # print(parola.scritta, quale.scritta)
+                        aggancio = i 
+                        
+                        break
+            
+            # print(chr(key), quale.scritta[0])
+            pro = AMMO(self.screen,ammo_img, (50, 25), self.actposx, self.actposy, chr(key), aggancio,
+                       [self.actposx - nem.actword[aggancio].actposx, self.actposy - nem.actword[aggancio].actposy])
+            
             self.muniz.append(pro)
         else:
             pass
@@ -91,22 +122,25 @@ class NAVICELLA:
     
     def mira(self, nemici):
         for proiettile in self.muniz:
-            if proiettile.posx < nemici.actword[proiettile.parola_agganciata].posx:
-                proiettile.direction[0] = (nemici.actword[proiettile.parola_agganciata].posx - proiettile.posx)
-            else:
-                proiettile.direction[0] = (proiettile.posx - nemici.actword[proiettile.parola_agganciata].posx)
+            # if proiettile.posx < nemici.actword[proiettile.parola_agganciata].posx:
+            #     proiettile.direction[0] = (nemici.actword[proiettile.parola_agganciata].posx - proiettile.posx)
+            # else:
+            proiettile.direction[0] = (proiettile.posx - nemici.actword[proiettile.parola_agganciata].actposx)
             
-            if proiettile.posy < nemici.actword[proiettile.parola_agganciata].posy :
-                proiettile.direction[1] = (nemici.actword[proiettile.parola_agganciata].posy - proiettile.posy)
-            else:
-                proiettile.direction[1] = (proiettile.posy - nemici.actword[proiettile.parola_agganciata].posy)
-                
+            # if proiettile.posy < nemici.actword[proiettile.parola_agganciata].posy :
+            #     proiettile.direction[1] = (nemici.actword[proiettile.parola_agganciata].posy - proiettile.posy)
+            # else:
+            proiettile.direction[1] = (proiettile.posy - nemici.actword[proiettile.parola_agganciata].actposy)
+            proiettile.speed = [ nemici.actword[proiettile.parola_agganciata].actposx,  
+                                nemici.actword[proiettile.parola_agganciata].actposy ]
             # proiettile.ruota(nemici.actword[proiettile.parola_agganciata])
+            
         else:
             pass
             
     def colpita(self):
         self.bloccato = True
+        
 
         
 # class Nemici:

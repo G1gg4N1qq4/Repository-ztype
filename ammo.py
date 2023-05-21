@@ -4,19 +4,20 @@ import pygame
 from pygame.locals import*
 
 class AMMO:
-    def __init__(self, screen, img, size, posx, posy, parola_agganciata = None, direction = [0, 10] ) -> None:
+    def __init__(self, screen, img, size, posx, posy, key, parola_agganciata = None, direction = [0, 10]) -> None:
         self.screen = screen
         self.img = img
         self.size = size
         self.posx = posx
         self.posy = posy
-        # self.speed = speed
+
         self.direction = direction
         self.parola_agganciata = parola_agganciata
+        self.key = key
         
     def move(self):
-        self.posy -= self.direction[1]/20
-        self.posx -= self.direction[0]/20
+        self.posy -= self.direction[1]/10
+        self.posx -= self.direction[0]/10
         
     # rotazione di prova
     def ruota(self, nemico):
@@ -37,6 +38,20 @@ class AMMO:
         
         self.img = pygame.transform.rotate(self.img, angle)
         print(angle)
+        
+        
+    def centrato(self, nem):
+        # if(nem.actword[self.parola_agganciata].actposx - self.posx) <= nem.size[0]:
+        #     if(nem.actword[self.parola_agganciata].actposx - self.posx) >= -nem.size[0]:
+        #         return True 
+        
+        if(nem.actword[self.parola_agganciata].actposy - self.posy) >= - nem.size[1]:
+            if(nem.actword[self.parola_agganciata].actposy - self.posy) <= nem.size[1]:
+                return True
+            
+            
+            
+        return False
         
     def draw(self):
         self.img = pygame.transform.scale(self.img, self.size)
