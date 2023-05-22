@@ -49,7 +49,7 @@ class NAVICELLA:
     #                                     self.size[0], self.size[1])
     #     # print(self.actposx, self.actposy)
         
-    def draw(self, nem):
+    def draw(self, nem = None):
         self.img = pygame.transform.scale(self.img, self.size)
         
         # self.move()

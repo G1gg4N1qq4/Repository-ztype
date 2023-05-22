@@ -27,7 +27,7 @@ class NEMICI:
     def aggiungi_parola(self):
         # print(len(self.parole))
         # print(self.counter)
-        if self.counter <= len(self.parole):
+        if self.counter <= len(self.parole) :
             # print(self.counter)
             # for i in range(self.counter):
             posx = random.randint(0,window_size[0])
@@ -80,6 +80,7 @@ class NEMICI:
     def colpito(self,i, key):
         if len(self.actword[i].scritta) <= 1:
             self.actword.pop(i)
+            # self.parole.pop(i)
             self.counter -=1
             return True
         else:

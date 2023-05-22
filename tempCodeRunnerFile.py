@@ -1,1 +1,1 @@
-window_size[0] - sconfitta.get_width())/2
+scree

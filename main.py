@@ -22,6 +22,28 @@ clock = pygame.time.Clock()
 fps = 60
 timer = 333333
 
+def start(screen, nav, sfondo1, sfondo2):
+    while nav.posy > 0:
+        nav.posy -= 5
+        screen.blit(sfondo1,(0,0))
+
+        nav.img = pygame.transform.scale(nav.img, nav.size)
+        screen.blit(nav.img, (nav.posx, nav.posy))
+        pygame.display.flip()
+        clock.tick(fps)
+    
+    nav.posy = window_size[1]
+    
+    while nav.posy != window_size[1] - 100:
+        nav.posy -= 1
+        screen.blit(sfondo2,(0,0))
+
+        nav.img = pygame.transform.scale(nav.img, nav.size)
+        screen.blit(nav.img, (nav.posx, nav.posy))
+        pygame.display.flip()
+        clock.tick(fps)
+        
+        
 def action(nav, nemici):
     global timer
     # for event in pygame.event.get():
@@ -29,8 +51,11 @@ def action(nav, nemici):
     for key in alph:
         if pygame.key.get_pressed()[key]:
 
-            
-            if timer < 2:
+            if len(nav.muniz) < 1:
+                tempomax = 5
+            else:
+                tempomax = 2
+            if timer < tempomax:
                 timer+=1
             else:
                 nav.shot(nemici, key)
@@ -75,10 +100,22 @@ def reset(navicella, nemici, destra):
     else:
         pygame.quit()
         sys.exit()
+        
+def carica_livello(livello):
+    parole = []
+    file_name = "level" + f"{livello}" + ".txt"
+    with open(file_name, "r", encoding = "utf-8") as f:
+        
+        parole = f.read().split("\n")
+        
+            
+    return parole
 # nemici = Nemici(screen, (100, 100), (50, 50))
 
 sfondo_immagine = pygame.image.load('immagini/sfondo.jpg')
-sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size) 
+sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+sfondo_immagine2 = pygame.image.load('immagini/sfondo.png')
+sfondo_immagine2 = pygame.transform.scale(sfondo_immagine, window_size)
 
 
 #set navicella
@@ -99,7 +136,13 @@ alph = [i for i in range(96,123)]
 
 # pygame.event.set_blocked(pygame.MOUSEMOTION)
 destra = False
+level = 1
+
+start(screen, n, sfondo_immagine2, sfondo_immagine)
+sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
+sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
 while True:
+    
     screen.blit(sfondo_immagine, (0,0))
     # gestione inputs
     for event in pygame.event.get():
@@ -116,7 +159,11 @@ while True:
                 n.colpita()
         
         action(n,nem)
+        
+        nem.parole = carica_livello(level)
     else:
+        sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
+        sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
         n.img = pygame.image.load("immagini/Exp.png")
         sconfitta = font.render("HAI PERSO", True, (200,20,20), None)
         sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
@@ -132,6 +179,11 @@ while True:
         
         if pygame.key.get_pressed()[K_RETURN]:
             n, nem = reset(n,nem,destra)
+            sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
+            sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+            start(screen, n, sfondo_immagine2, sfondo_immagine)
+            sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
+            sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
         
     
 
