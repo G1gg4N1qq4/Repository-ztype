@@ -30,7 +30,7 @@ def action(nav, nemici):
         if pygame.key.get_pressed()[key]:
 
             
-            if timer < 3:
+            if timer < 2:
                 timer+=1
             else:
                 nav.shot(nemici, key)

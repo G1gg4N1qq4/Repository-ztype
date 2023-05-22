@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import*
 
 class AMMO:
-    def __init__(self, screen, img, size, posx, posy, key, parola_agganciata = None, direction = [0, 10]) -> None:
+    def __init__(self, screen, img, size, posx, posy, key, direction = [0, 10]) -> None:
         self.screen = screen
         self.img = img
         self.size = size
@@ -12,7 +12,7 @@ class AMMO:
         self.posy = posy
 
         self.direction = direction
-        self.parola_agganciata = parola_agganciata
+        # self.parola_agganciata = parola_agganciata
         self.key = key
         
     def move(self):
@@ -40,13 +40,13 @@ class AMMO:
         print(angle)
         
         
-    def centrato(self, nem):
+    def centrato(self, nem, parola_agganciata):
         # if(nem.actword[self.parola_agganciata].actposx - self.posx) <= nem.size[0]:
         #     if(nem.actword[self.parola_agganciata].actposx - self.posx) >= -nem.size[0]:
         #         return True 
         
-        if(nem.actword[self.parola_agganciata].actposy - self.posy) >= - nem.size[1]:
-            if(nem.actword[self.parola_agganciata].actposy - self.posy) <= nem.size[1]:
+        if(nem.actword[parola_agganciata].actposy - self.posy) >= - nem.size[1]:
+            if(nem.actword[parola_agganciata].actposy - self.posy) <= nem.size[1]:
                 return True
             
             

@@ -81,9 +81,12 @@ class NEMICI:
         if len(self.actword[i].scritta) <= 1:
             self.actword.pop(i)
             self.counter -=1
+            return True
         else:
+            # print("!")
             if key == self.actword[i].scritta[0]:
                 self.actword[i].scritta = self.actword[i].scritta[1:]
+            return False
             
 
 class parola:
