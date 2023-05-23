@@ -5,7 +5,7 @@ from ammo import AMMO
 
 class NAVICELLA:
     
-    def __init__(self, screen, img,size, shape, posx ,posy, parola_agganciata = None, speed = 7, muniz =[], bloccato = False) -> None:
+    def __init__(self, screen, img,size, shape, posx ,posy, parola_agganciata = None, speed = 7, muniz =[], bloccato = False, punteggio_round = [0, False]) -> None:
         
         #variabili visive
         self.screen = screen
@@ -24,6 +24,7 @@ class NAVICELLA:
         self.shape = shape
         self.bloccato = bloccato
         self.parola_agganciata = parola_agganciata
+        self.punteggio_round = punteggio_round
     # def move(self):
     #     cont = 0
     #     if self.actposx < self.posx:
@@ -47,7 +48,7 @@ class NAVICELLA:
             
     #     self.shape = pygame.rect.Rect(self.actposx - self.size[0]/2, self.actposy - self.size[1]/2, 
     #                                     self.size[0], self.size[1])
-    #     # print(self.actposx, self.actposy)
+
         
     def draw(self, nem = None):
         self.img = pygame.transform.scale(self.img, self.size)
@@ -72,7 +73,6 @@ class NAVICELLA:
                 if (proiettile.centrato(nem, self.parola_agganciata)):
                     self.muniz.pop(i)
                     for i, nemico in enumerate(nem.actword):
-                        # print(nem.actword[proiettile.parola_agganciata].scritta, nemico.scritta)
                         
                         if nemico.scritta == nem.actword[self.parola_agganciata].scritta:
                             
@@ -85,17 +85,25 @@ class NAVICELLA:
         
     def shot(self, nem, key):
         lettera_presente = False
-        for parola in nem.actword:
-            # print(chr(key), parola.scritta[0])
+        parola_trovata = False
+        self.punteggio_round[1] = False
+        
+        
+        for i,parola in enumerate(nem.actword):
+            
+            if self.parola_agganciata != None and parola.scritta ==  nem.actword[self.parola_agganciata].scritta:
+                parola_trovata = True
             if chr(key) == parola.scritta[0]:
                 lettera_presente = True
                 
                 break
             # self.muniz = self.muniz[0:-1]
         
+        if not parola_trovata:
+            self.parola_agganciata = None
         if not lettera_presente:
             self.parola_agganciata == None
-            # print("!!")
+
             return False
         if len(self.muniz) <= 25:
             trovata = False
@@ -111,17 +119,23 @@ class NAVICELLA:
                     if parola.scritta[0] == chr(key):
                         aggancio = i 
                         trovata = True
-                        # print("!")
+
                         break
             else:
                 if nem.actword[self.parola_agganciata].scritta[0] == chr(key):
                     aggancio = self.parola_agganciata
                     trovata = True
-                    # print("!!")
+
             if trovata != False:
             
                 self.parola_agganciata = aggancio
             else:
+                self.punteggio_round = [1, False]
+                # print("!")
+                # già_distrutta = False
+                # for i,parole in enumerate(nem.actword):
+                #     if parole.scritta == nem.actword[]
+                # self.parola_agganciata = None
                 return False
             # while chr(key) != quale.scritta[0]:
             #     if self.parola_agganciata == None:
@@ -131,17 +145,18 @@ class NAVICELLA:
             #     for i, parola in enumerate(nem.actword):
 
             #         if parola.scritta[0] == chr(key):
-            #             # print(parola.scritta, quale.scritta)
+
             #             aggancio = i 
                         
             #             break
             
-            # print(chr(key), quale.scritta[0])
-            if nem.colpito(self.parola_agganciata, chr(key)):
+
+            if nem.colpito(self.parola_agganciata, chr(key), self):
                 self.parola_agganciata = None
                 self.muniz = self.muniz[len(self.muniz)-1:-1:]
+                self.punteggio_round = [1, True]
             else:
-
+                self.punteggio_round = [0, False]
                 pro = AMMO(self.screen,ammo_img, (50, 25), self.posx, self.posy, chr(key),
                         [self.posx - nem.actword[self.parola_agganciata].actposx, self.posy - nem.actword[self.parola_agganciata].actposy])
                 
