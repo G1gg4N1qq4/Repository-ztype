@@ -24,9 +24,12 @@ clock = pygame.time.Clock()
 fps = 60
 timer = 333333
 
-def start(screen, nav, sfondo1, sfondo2, nemici):
+def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
     nem.parole = carica_livello(level)
     nemici.aggiungi_parola()
+    
+    if leveling:
+        nemici.maxnem += 5
 
     while nav.posy > 0:
         nav.posy -= 5
@@ -57,7 +60,7 @@ def disegna_testo(testo, posizione):
 def action(nav, nemici):
     global timer
     # for event in pygame.event.get():
-    #     print(pygame.event.get())
+
     for key in alph:
         if pygame.key.get_pressed()[key]:
 
@@ -65,8 +68,10 @@ def action(nav, nemici):
                 tempomax = 3
             else:
                 tempomax = 2
+                
             if timer < tempomax:
                 timer+=1
+                nav.punteggio_round[1] = False
             else:
                 nav.shot(nemici, key)
 
@@ -124,11 +129,20 @@ def carica_livello(livello):
     return parole
 # nemici = Nemici(screen, (100, 100), (50, 50))
 
+def controlla_vittoria(nemici):
+    # print(len(nemici.actword))
+    if len(nemici.actword) < 1:
+        return True
 
-sfondo_immagine = pygame.image.load('immagini/sfondo.jpg')
+    return False
+
+
+sfondo_immagine = pygame.image.load('immagini/sfondo.png')
 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-sfondo_immagine2 = pygame.image.load('immagini/sfondo.png')
-sfondo_immagine2 = pygame.transform.scale(sfondo_immagine, window_size)
+sfondo_immagine2 = pygame.image.load('immagini/sfondo.jpg')
+sfondo_immagine2 = pygame.transform.scale(sfondo_immagine2, window_size)
+sfondo_immagine3 = pygame.image.load('immagini/sfondo2.jpg')
+sfondo_immagine3 = pygame.transform.scale(sfondo_immagine3, window_size)
 
 
 #set navicella
@@ -145,20 +159,24 @@ pygame.mouse.set_visible(True)
 
 #alfabeto
 alph = [i for i in range(96,123)]
-# print(alph)
+
 
 # pygame.event.set_blocked(pygame.MOUSEMOTION)
 destra = False
 level = 1
 punteggio = 0
+vittoria = False
 
-start(screen, n, sfondo_immagine2, sfondo_immagine, nem)
+start(screen, n, sfondo_immagine, sfondo_immagine2, nem)
 sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+
+parola_digitata = ""
+
 while True:
     
     screen.blit(sfondo_immagine, (0,0))
-    disegna_testo(f"Parola: ", (10, 10))
+    disegna_testo(f"Parola: {parola_digitata}", (10, 10))
     disegna_testo(f"Punteggio: {punteggio}", (10, 50))
     # gestione inputs
     for event in pygame.event.get():
@@ -166,48 +184,69 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # keys = pygame.key.get_pressed()
-    if not n.bloccato:
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                parola_digitata = parola_digitata[:-1]
+            elif event.key == pygame.K_RETURN:
+                parola_digitata = ""
+            else:
+                parola_digitata += event.unicode
+            
 
-        for i,nemico in enumerate(nem.actword):
-            if n.centrata(nemico):
-                n.draw(nem)
-                n.colpita()
-        
-        action(n,nem)
-        
-    
-    else:
+    # keys = pygame.key.get_pressed()
+    if vittoria:
+        n, nem = reset(n,nem,False)
         sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
         sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-        n.img = pygame.image.load("immagini/Exp.png")
-        sconfitta = font.render("HAI PERSO", True, (200,20,20), None)
-        sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
-        screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1] - sconfitta.get_height())/2 )) 
+        start(screen, n, sfondo_immagine2, sfondo_immagine, nem, True)
+        sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
+        sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+        vittoria = False
+        print(nem.counter)
+    else:
+        if not n.bloccato:
+
+            for i,nemico in enumerate(nem.actword):
+                if n.centrata(nemico):
+                    n.draw(nem)
+                    n.colpita()
+            
+            action(n,nem)
+            
         
-        if pygame.key.get_pressed()[K_RIGHT]:
-            destra = True
-        
-        if pygame.key.get_pressed()[K_LEFT]:
-            destra = False
-        
-        continua( (window_size[1]+ sconfitta.get_height())/2, destra)
-        
-        if pygame.key.get_pressed()[K_RETURN]:
-            n, nem = reset(n,nem,destra)
+        else:
             sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
             sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-            start(screen, n, sfondo_immagine2, sfondo_immagine, nem)
-            sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
-            sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+            n.img = pygame.image.load("immagini/Exp.png")
+            sconfitta = font.render("HAI PERSO", True, (200,20,20), None)
+            sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
+            screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1] - sconfitta.get_height())/2 )) 
+            
+            if pygame.key.get_pressed()[K_RIGHT]:
+                destra = True
+            
+            if pygame.key.get_pressed()[K_LEFT]:
+                destra = False
+            
+            continua( (window_size[1]+ sconfitta.get_height())/2, destra)
+            
+            if pygame.key.get_pressed()[K_RETURN]:
+                n, nem = reset(n,nem,destra)
+                sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
+                sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+                start(screen, n, sfondo_immagine2, sfondo_immagine, nem)
+                sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
+                sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+            
+        vittoria = controlla_vittoria(nem)
+
+
         
-    
-
-
-    
     n.draw(nem)
     
-    punteggio += n.punteggio_round
+    if n.punteggio_round[1]:
+        punteggio += n.punteggio_round[0]
+        parola_digitata = ""
     #azione nemico
 
     nem.draw()

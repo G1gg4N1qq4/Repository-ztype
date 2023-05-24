@@ -26,9 +26,7 @@ class NEMICI:
         
     
     def aggiungi_parola(self):
-        # print(len(self.parole))
-        # print(self.counter)
-            # print(self.counter)
+
             # for i in range(self.counter):
         while self.counter <= self.maxnem:
             posx = random.randint(0,window_size[0])
@@ -37,7 +35,7 @@ class NEMICI:
             for p in self.actword:
                 while word == p.scritta:
                     word = random.choice(self.parole)
-            print(word)
+
             self.actword.append(parola(self.screen,word, posx, 
                                     posy , self.direction[0], self.direction[1]))
             
@@ -46,19 +44,18 @@ class NEMICI:
                     self.actword[-1].scritta = random.choice(self.parole)
                     
             self.counter +=1
-                        # print(self.parole)
+
     
     
     def draw(self, proiettile = None):
         
-        # print(len(self.actword))
+
         for parol in self.actword:
             if parol.actposy > window_size[1]:
                 for elem in self.actword:
                     if elem.scritta == parol.scritta:
                         self.actword.remove(elem)
 
-                # print(parol.posy)
                 
                 
         if proiettile == None:
@@ -68,10 +65,10 @@ class NEMICI:
                         if elem.scritta == parol.scritta:
                             self.actword.remove(elem)
                             self.counter -= 1
-                    # print(parol.posy)
+                    
                 else: 
                     parol.draw()
-                    # print(parol.scritta)
+
                     img = font.render(parol.scritta, True, (200,200,200), None)
                     img = pygame.transform.scale(img,(self.size[0]*2, self.size[1]*3))
                     self.screen.blit(img,(parol.actposx, parol.actposy))
@@ -82,20 +79,22 @@ class NEMICI:
                 img = pygame.transform.scale(img,self.size)
                 self.screen.blit(img,(parol.actposx, parol.actposy))
                         
-
 # DA SISTEMARE IL PUNTEGGIO QUA SOTTO E NELLA LINEA 144 DI NAVICELLA
-    def colpito(self,i, key):
+    def colpito(self,i, key , nav):
+        spazio = " "
         if len(self.actword[i].scritta) <= 1:
             self.actword.pop(i)
             # self.parole.pop(i)
-            self.counter -=1
+            # self.counter -=1
+            nav.parola_agganciata = None
+            nav.punteggio_round = [0, False]
             return True
         else:
-            # print("!")
+
             if key == self.actword[i].scritta[0]:
-                self.actword[i].scritta = self.actword[i].scritta[1:]
+                self.actword[i].scritta = spazio + self.actword[i].scritta[1:]
             return False
-            
+    # sistemare tutta questa parte sopra, mezzo funziona, ma si bugga e non fa più scrivere
 
 class parola:
     def __init__(self, screen, scritta, actposx, actposy, posx,posy,
@@ -141,11 +140,11 @@ class parola:
                 if self.actposy != self.posy :
                     self.actposy = self.actposy - (0.2 *self.speed)
                     # cont += 0.2
-        # print(self.actposx, self.actposy)
+
         # self.shape = pygame.rect.Rect(self.actposx , self.actposy, self.size[0], self.size[1]/40 )
         
     def draw(self, extspeed = None):
-        # print(extspeed)
+
         self.move(extspeed)
         
         
