@@ -199,7 +199,8 @@ class NAVICELLA:
                 
         else:
             pass
-        
+    
+    
     def centrata(self, nem):
         # if(nem.actword[self.parola_agganciata].actposx - self.posx) <= nem.size[0]:
         #     if(nem.actword[self.parola_agganciata].actposx - self.posx) >= -nem.size[0]:

@@ -53,7 +53,7 @@ class NEMICI:
                     
             self.counter +=1
 
-    
+
     
     def draw(self, proiettile = None):
         
@@ -156,5 +156,3 @@ class parola:
     def draw(self, extspeed = None):
 
         self.move(extspeed)
-        
-        
