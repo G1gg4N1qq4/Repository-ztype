@@ -108,11 +108,16 @@ def action(nav, nemici):
 
                 timer = 0
         
+        tempomax = 360
         if pygame.key.get_pressed()[K_RETURN]:
-
-            if special_shot > 0:
-                nav.big_shot(nemici)
-                special_shot -= 1
+            if timer < tempomax:
+                timer += 1
+            else:
+                if special_shot > 0 :
+                    nav.big_shot(nemici)
+                    special_shot -= 1
+                    
+                    timer = 0
 
 
 
@@ -217,7 +222,7 @@ destra = False
 level = 1
 punteggio = 0
 vittoria = False
-special_shot = 0
+special_shot = 3
 main_music = pygame.mixer.Sound("audio/mainmusic.mp3")
 
 

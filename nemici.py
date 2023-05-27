@@ -77,13 +77,13 @@ class NEMICI:
                 else: 
                     parol.draw()
 
-                    img = font.render(parol.scritta, True, (200,200,200), None)
+                    img = font.render(parol.scritta, True, (200,200,200, 180), None)
                     img = pygame.transform.scale(img,(img.get_width()/4, img.get_height()/4))
                     self.screen.blit(img,(parol.actposx, parol.actposy))
         else:
             for parol in self.actword:
 
-                img = font.render(parol.scritta, True, (200,200,200), None)
+                img = font.render(parol.scritta, True, (200,200,200, 180), None)
                 img = pygame.transform.scale(img,self.size)
                 self.screen.blit(img,(parol.actposx, parol.actposy))
                         
