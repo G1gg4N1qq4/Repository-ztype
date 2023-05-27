@@ -1,7 +1,7 @@
-
 from os import system
 system("cls")
 import random
+
 
 from navicella import NAVICELLA
 from nemici import NEMICI
