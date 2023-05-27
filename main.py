@@ -23,7 +23,8 @@ pygame.display.set_caption('Zty.pe')
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 font = pygame.font.Font(None, 36)
-font2 = pygame.font.Font(None, 60)
+font2 = pygame.font.Font("fonts/techno_hideo_bold.ttf", 50)
+font3 = pygame.font.Font("fonts/techno_hideo_bold.ttf", 130)
 
 clock = pygame.time.Clock()
 fps = 60
@@ -33,8 +34,13 @@ timer = 333333
 
 def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
     nem.parole = carica_livello(level)
+    rocket_sound = pygame.mixer.Sound("audio/rocket-engine.mp3")
+    rocket_sound.play(-1,0,0)
+
     if leveling:
-        nemici.maxnem += 5
+        nemici.maxnem += 2
+        nemici.counter = 0
+    
     nemici.aggiungi_parola()
 
     while nav.posy > 0:
@@ -48,6 +54,9 @@ def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
     
     nav.posy = window_size[1]
     
+    arrival = pygame.mixer.Sound("audio/arrival.mp3")
+    arrival.play(-1,0,0)
+
     while nav.posy != window_size[1] - 100:
         nav.posy -= 1
         screen.blit(sfondo2,(0,0))
@@ -56,6 +65,9 @@ def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
         screen.blit(nav.img, (nav.posx, nav.posy))
         pygame.display.flip()
         clock.tick(fps)
+
+    rocket_sound.stop()
+    arrival.stop()
 
 
 #funzioni disegna testo
@@ -73,6 +85,7 @@ def disegna_testo_centrale(text, font, color, surface, posX, posY):
 
 def action(nav, nemici):
     global timer
+    global special_shot
     # for event in pygame.event.get():
 
     for key in alph:
@@ -84,12 +97,18 @@ def action(nav, nemici):
                 tempomax = 2
                 
             if timer < tempomax:
-                timer+=1
+                timer += 1
                 nav.punteggio_round[1] = False
             else:
                 nav.shot(nemici, key)
 
                 timer = 0
+        
+        if pygame.key.get_pressed()[K_RETURN]:
+
+            if special_shot > 0:
+                nav.big_shot(nemici)
+                special_shot -= 1
 
 
 
@@ -123,10 +142,12 @@ def continua(altezza0, destra):
 
 
 def reset(navicella, nemici, destra):
+    global punteggio
     if not destra:
         navicella = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
                     window_size[0]/2 - 50, window_size[1] - 100)
         nemici = NEMICI(screen, (window_size[0]/30, window_size[1]/40) ,(posx,posy))
+        
         return navicella, nemici
     else:
         pygame.quit()
@@ -135,7 +156,7 @@ def reset(navicella, nemici, destra):
 
 def carica_livello(livello):
     parole = []
-    file_name = "level" + f"{livello}" + ".txt"
+    file_name = "level1.txt"
     with open(file_name, "r", encoding = "utf-8") as f:
         parole = f.read().split("\n")
     
@@ -176,6 +197,8 @@ destra = False
 level = 1
 punteggio = 0
 vittoria = False
+special_shot = 0
+# main_music = pygame.mixer.Sound("audio/mainmusic.mp3")
 
 
 
@@ -213,7 +236,10 @@ while giocare:
     screen.blit(sfondo_immagine, (0,0))
     bottone_gioca()
     bottone_quitta()
-    disegna_testo_centrale("Benvenuto in Zty.pe", font2, WHITE, screen, window_size[0]//2, window_size[1]//2)
+    disegna_testo_centrale("Benvenuto", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 130)
+    disegna_testo_centrale("in", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 75)
+    disegna_testo_centrale("ZTY.PE", font3, WHITE, screen, window_size[0]//2, window_size[1]//2)
+
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -245,6 +271,8 @@ while True:
     screen.blit(sfondo_immagine, (0,0))
     disegna_testo(f"Parola: ", (10, 10))
     disegna_testo(f"Punteggio: {punteggio}", (10, 50))
+    disegna_testo(f"Electric Camp: {special_shot}", (10, 90))
+    # main_music.play(-1,0,0)
 
     # gestione inputs
     for event in pygame.event.get():
@@ -261,7 +289,10 @@ while True:
         sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
         sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
         vittoria = False
-        print(nem.counter)
+        
+        if random.randint(-1,1) == 1:
+            special_shot += 1
+
     else:
         if not n.bloccato:
 
@@ -277,6 +308,8 @@ while True:
             sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
             sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
             n.img = pygame.image.load("immagini/Exp.png")
+            
+            
             sconfitta = font.render("HAI PERSO", True, (200,20,20), None)
             sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
             screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1] - sconfitta.get_height())/2 )) 
@@ -296,6 +329,7 @@ while True:
                 start(screen, n, sfondo_immagine2, sfondo_immagine, nem)
                 sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
                 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+                punteggio = 0
             
         vittoria = controlla_vittoria(nem)
 
