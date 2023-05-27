@@ -26,29 +26,26 @@ class NEMICI:
         
     
     def aggiungi_parola(self):
-
-            # for i in range(self.counter):
+        #Generazione nemici, quindi scelta delle parole 
         while self.counter <= self.maxnem:
             posx = random.randint(0,window_size[0])
             posy = random.randint(0,100)
             word = random.choice(self.parole)
             for p in self.actword:
-                while word == p.scritta:
+                while word[0] == p.scritta[0]:
                     word = random.choice(self.parole)
-
+            
             self.actword.append(parola(self.screen,word, posx, 
                                     posy , self.direction[0], self.direction[1]))
             
             for i,parol in enumerate(self.actword):
                 while self.actword[-1].scritta == parol.scritta and i != len(self.actword)-1:
                     self.actword[-1].scritta = random.choice(self.parole)
-                    
+            
             self.counter +=1
 
-    
-    
+
     def draw(self, proiettile = None):
-        
 
         for parol in self.actword:
             if parol.actposy > window_size[1]:
@@ -56,8 +53,7 @@ class NEMICI:
                     if elem.scritta == parol.scritta:
                         self.actword.remove(elem)
 
-                
-                
+
         if proiettile == None:
             for parol in self.actword:
                 if parol.posy > window_size[1]:
@@ -78,10 +74,10 @@ class NEMICI:
                 img = font.render(parol.scritta, True, (200,200,200), None)
                 img = pygame.transform.scale(img,self.size)
                 self.screen.blit(img,(parol.actposx, parol.actposy))
-                        
+
+
 # DA SISTEMARE IL PUNTEGGIO QUA SOTTO E NELLA LINEA 144 DI NAVICELLA
     def colpito(self,i, key , nav):
-        spazio = " "
         if len(self.actword[i].scritta) <= 1:
             self.actword.pop(i)
             # self.parole.pop(i)
@@ -92,9 +88,9 @@ class NEMICI:
         else:
 
             if key == self.actword[i].scritta[0]:
-                self.actword[i].scritta = spazio + self.actword[i].scritta[1:]
+                self.actword[i].scritta = self.actword[i].scritta[1:]
             return False
-    # sistemare tutta questa parte sopra, mezzo funziona, ma si bugga e non fa più scrivere
+            
 
 class parola:
     def __init__(self, screen, scritta, actposx, actposy, posx,posy,
@@ -142,9 +138,6 @@ class parola:
                     # cont += 0.2
 
         # self.shape = pygame.rect.Rect(self.actposx , self.actposy, self.size[0], self.size[1]/40 )
-        
-    def draw(self, extspeed = None):
 
+    def draw(self, extspeed = None):
         self.move(extspeed)
-        
-        

@@ -10,26 +10,32 @@ from pygame.locals import *
 # from nemici import Nemici
 import os
 os.system('cls')
-
 pygame.init()
 
+
+
 window_size = (480*2, 272*2)
+screen_width = window_size[0]
+screen_height = window_size[1]
 screen = pygame.display.set_mode(window_size, 0, 32)
 
 pygame.display.set_caption('Zty.pe')
-BIANCO = (255,255,255)
+WHITE = (255,255,255)
+BLACK = (0,0,0)
 font = pygame.font.Font(None, 36)
-# font = pygame.font.SysFont(pygame.font.get_default_font(),int(window_size[1]), bold = True, italic = False)
+font2 = pygame.font.Font(None, 60)
+
 clock = pygame.time.Clock()
 fps = 60
 timer = 333333
 
+
+
 def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
     nem.parole = carica_livello(level)
-    nemici.aggiungi_parola()
-    
     if leveling:
         nemici.maxnem += 5
+    nemici.aggiungi_parola()
 
     while nav.posy > 0:
         nav.posy -= 5
@@ -52,9 +58,17 @@ def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
         clock.tick(fps)
 
 
+#funzioni disegna testo
 def disegna_testo(testo, posizione):
-        testo_renderizzato = font.render(testo, True, BIANCO)
-        screen.blit(testo_renderizzato, posizione)
+    testo_renderizzato = font.render(testo, True, WHITE)
+    screen.blit(testo_renderizzato, posizione)
+
+def disegna_testo_centrale(text, font, color, surface, posX, posY):
+    scritta = font.render(text, True, color)
+    scritta_rect = scritta.get_rect()
+    scritta_rect.center = (posX, posY)
+    surface.blit(scritta, scritta_rect)
+
 
 
 def action(nav, nemici):
@@ -76,7 +90,9 @@ def action(nav, nemici):
                 nav.shot(nemici, key)
 
                 timer = 0
-            
+
+
+
 def continua(altezza0, destra):
     conti_img = "CONTINUARE?"
     conti_img = font.render(conti_img, True, (100,0,0))
@@ -107,7 +123,6 @@ def continua(altezza0, destra):
 
 
 def reset(navicella, nemici, destra):
-    
     if not destra:
         navicella = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
                     window_size[0]/2 - 50, window_size[1] - 100)
@@ -122,22 +137,18 @@ def carica_livello(livello):
     parole = []
     file_name = "level" + f"{livello}" + ".txt"
     with open(file_name, "r", encoding = "utf-8") as f:
-        
         parole = f.read().split("\n")
-        
-            
+    
     return parole
-# nemici = Nemici(screen, (100, 100), (50, 50))
+
 
 def controlla_vittoria(nemici):
-    # print(len(nemici.actword))
     if len(nemici.actword) < 1:
         return True
-
     return False
 
-
-sfondo_immagine = pygame.image.load('immagini/sfondo.png')
+#set immagini
+sfondo_immagine = pygame.image.load('immagini/spazio.jpg')
 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
 sfondo_immagine2 = pygame.image.load('immagini/sfondo.jpg')
 sfondo_immagine2 = pygame.transform.scale(sfondo_immagine2, window_size)
@@ -161,39 +172,87 @@ pygame.mouse.set_visible(True)
 alph = [i for i in range(96,123)]
 
 
-# pygame.event.set_blocked(pygame.MOUSEMOTION)
 destra = False
 level = 1
 punteggio = 0
 vittoria = False
 
+
+
+#bottone di play
+def bottone_gioca():
+    button_width = 150
+    button_height = 50
+    button_x = screen_width // 2 - button_width // 2
+    button_y = screen_height // 2 - button_height // 2 + 100
+
+    play_button = pygame.Surface((button_width, button_height), pygame.SRCALPHA)
+    pygame.draw.rect(play_button, (0, 0, 0, 180), pygame.Rect(0, 0, button_width, button_height))
+    pygame.draw.rect(play_button, WHITE, pygame.Rect(0, 0, button_width, button_height), 3)
+
+    screen.blit(play_button, (button_x, button_y))
+    disegna_testo_centrale("Gioca", font, WHITE, screen, window_size[0]//2, window_size[1]//2 + 100)
+
+#bottone di quit
+def bottone_quitta():
+    button_width = 150
+    button_height = 50
+    button_x = screen_width // 2 - button_width // 2
+    button_y = screen_height // 2 - button_height // 2 + 160
+
+    play_button = pygame.Surface((button_width, button_height), pygame.SRCALPHA)
+    pygame.draw.rect(play_button, (0, 0, 0, 180), pygame.Rect(0, 0, button_width, button_height))
+    pygame.draw.rect(play_button, WHITE, pygame.Rect(0, 0, button_width, button_height), 3)
+
+    screen.blit(play_button, (button_x, button_y))
+    disegna_testo_centrale("Esci", font, WHITE, screen, window_size[0]//2, window_size[1]//2 + 160)
+
+
+giocare = True
+while giocare:
+    screen.blit(sfondo_immagine, (0,0))
+    bottone_gioca()
+    bottone_quitta()
+    disegna_testo_centrale("Benvenuto in Zty.pe", font2, WHITE, screen, window_size[0]//2, window_size[1]//2)
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 160, 150, 50)
+            if button_rect.collidepoint(mouse_pos):
+                pygame.quit()
+                sys.exit() 
+        
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 100, 150, 50)
+            if button_rect.collidepoint(mouse_pos):
+                giocare = False
+    
+    pygame.display.update()
+
+
+#animazione iniziale
 start(screen, n, sfondo_immagine, sfondo_immagine2, nem)
 sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
 
-parola_digitata = ""
-
 while True:
-    
+    #Costruzione sfondo con parola digitata e punteggio
     screen.blit(sfondo_immagine, (0,0))
-    disegna_testo(f"Parola: {parola_digitata}", (10, 10))
+    disegna_testo(f"Parola: ", (10, 10))
     disegna_testo(f"Punteggio: {punteggio}", (10, 50))
+
     # gestione inputs
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_BACKSPACE:
-                parola_digitata = parola_digitata[:-1]
-            elif event.key == pygame.K_RETURN:
-                parola_digitata = ""
-            else:
-                parola_digitata += event.unicode
-            
-
-    # keys = pygame.key.get_pressed()
+    #controllo vittoria
     if vittoria:
         n, nem = reset(n,nem,False)
         sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
@@ -241,16 +300,15 @@ while True:
         vittoria = controlla_vittoria(nem)
 
 
-        
+    #Disegno dei nemici
     n.draw(nem)
     
+    #Aggiornamento punteggio totale
     if n.punteggio_round[1]:
         punteggio += n.punteggio_round[0]
-        parola_digitata = ""
-    #azione nemico
-
+    
+    #Azione nemico
     nem.draw()
-    # nemici.draw()
     pygame.display.flip()
     clock.tick(fps)
 
