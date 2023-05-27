@@ -87,8 +87,6 @@ class NAVICELLA:
         lettera_presente = False
         parola_trovata = False
         self.punteggio_round[1] = False
-        if self.parola_agganciata != None:
-            print(nem.actword[self.parola_agganciata].scritta)
             
         if self.parola_agganciata != None and nem.actword[self.parola_agganciata].scritta == " ":
             nem.actword.pop(self.parola_agganciata)
@@ -161,7 +159,7 @@ class NAVICELLA:
             #             break
             
 
-            # print("!")
+
             if nem.colpito(self.parola_agganciata, chr(key), self):
                 self.parola_agganciata = None
                 self.muniz = []

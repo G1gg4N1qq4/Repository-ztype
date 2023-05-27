@@ -34,6 +34,7 @@ timer = 333333
 
 
 def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
+    global sfon1, sfon2, posy1,posy2
     nem.parole = carica_livello(level)
     rocket_sound = pygame.mixer.Sound("audio/rocket-engine.mp3")
     rocket_sound.play(-1,0,0)
@@ -45,11 +46,13 @@ def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
     nemici.aggiungi_parola()
 
     while nav.posy > 0:
+        posy1,posy2 = moving_background(screen, sfon1, sfon2, posy1, posy2)
+
         nav.posy -= 5
-        screen.blit(sfondo1,(0,0))
+        # screen.blit(sfondo1,(0,0))
 
         nav.img = pygame.transform.scale(nav.img, nav.size)
-        screen.blit(nav.img, (nav.posx, nav.posy))
+        screen.blit(nav.img, (nav.posx + nav.size[0]/2, nav.posy + nav.size[1]/2))
         pygame.display.flip()
         clock.tick(fps)
     
@@ -115,7 +118,7 @@ def action(nav, nemici):
 
 def continua(altezza0, destra):
     conti_img = "CONTINUARE?"
-    conti_img = font.render(conti_img, True, (100,0,0))
+    conti_img = font2.render(conti_img, True, (100,0,0))
     conti_img = pygame.transform.scale(conti_img, ((conti_img.get_width()*window_size[1]/conti_img.get_height())/10,
                                                    window_size[1]/10))
     screen.blit(conti_img,((window_size[0] - conti_img.get_width())/2, altezza0 + 10))
@@ -169,8 +172,24 @@ def controlla_vittoria(nemici):
         return True
     return False
 
+def moving_background(screen, sfondo1,sfondo2, posy1, posy2):
+    global window_size
+    screen.blit(sfondo1, (0,posy1))
+    screen.blit(sfondo2, (0, posy2))
+    if posy1 >= window_size[1]:
+        posy1 =-window_size[1] + 1
+    else:
+        posy1 += 1
+
+    if posy2 >= window_size[1]:
+        posy2 = -window_size[1] + 1
+    else:
+        posy2 += 1
+        
+    return posy1,posy2
+    
 #set immagini
-sfondo_immagine = pygame.image.load('immagini/spazio.jpg')
+sfondo_immagine = pygame.image.load('immagini/spazio.png')
 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
 sfondo_immagine2 = pygame.image.load('immagini/sfondo.jpg')
 sfondo_immagine2 = pygame.transform.scale(sfondo_immagine2, window_size)
@@ -199,7 +218,7 @@ level = 1
 punteggio = 0
 vittoria = False
 special_shot = 0
-# main_music = pygame.mixer.Sound("audio/mainmusic.mp3")
+main_music = pygame.mixer.Sound("audio/mainmusic.mp3")
 
 
 
@@ -231,16 +250,25 @@ def bottone_quitta():
     screen.blit(play_button, (button_x, button_y))
     disegna_testo_centrale("Esci", font, WHITE, screen, window_size[0]//2, window_size[1]//2 + 160)
 
+menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
+menu_sound.play(-1)
+giocare = False
+sfon1 = sfondo_immagine 
+sfon1 = pygame.transform.scale(sfondo_immagine, window_size)
+sfon2 = sfon1
+posy1 = 0
+posy2 = window_size[1]
 
-giocare = True
-while giocare:
-    screen.blit(sfondo_immagine, (0,0))
+while not giocare:
+    # screen.blit(sfondo_immagine, (0,0))
+    posy1,posy2 = moving_background(screen, sfon1, sfon2, posy1, posy2)
     bottone_gioca()
     bottone_quitta()
     disegna_testo_centrale("Benvenuto", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 130)
     disegna_testo_centrale("in", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 75)
     disegna_testo_centrale("ZTY.PE", font3, WHITE, screen, window_size[0]//2, window_size[1]//2)
-
+    n.img = pygame.transform.scale(n.img, n.size)
+    screen.blit(n.img, (n.posx + n.size[0]/2 , n.posy + n.size[1]/2 + 10))
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -252,15 +280,15 @@ while giocare:
             if button_rect.collidepoint(mouse_pos):
                 pygame.quit()
                 sys.exit() 
-        
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 100, 150, 50)
-            if button_rect.collidepoint(mouse_pos):
-                giocare = False
+            else:
+                mouse_pos = pygame.mouse.get_pos()
+                button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 100, 150, 50)
+                if button_rect.collidepoint(mouse_pos):
+                    giocare = True
     
     pygame.display.update()
 
+menu_sound.stop()
 
 #animazione iniziale
 start(screen, n, sfondo_immagine, sfondo_immagine2, nem)
@@ -273,7 +301,7 @@ while True:
     disegna_testo(f"Parola: ", (10, 10))
     disegna_testo(f"Punteggio: {punteggio}", (10, 50))
     disegna_testo(f"Electric Camp: {special_shot}", (10, 90))
-    # main_music.play(-1,0,0)
+    main_music.play(-1,0,0)
 
     # gestione inputs
     for event in pygame.event.get():
@@ -311,7 +339,7 @@ while True:
             n.img = pygame.image.load("immagini/Exp.png")
             
             
-            sconfitta = font.render("HAI PERSO", True, (200,20,20), None)
+            sconfitta = font2.render("HAI PERSO", True, (200,20,20), None)
             sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
             screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1] - sconfitta.get_height())/2 )) 
             

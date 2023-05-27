@@ -35,7 +35,7 @@ class NEMICI:
             word = random.choice(self.parole)
             for p in self.actword:
                 while word[0] == p.scritta[0]:
-                    print(word)
+
                     word = random.choice(self.parole)
                 
                 while posx == p.actposx:
@@ -101,8 +101,7 @@ class NEMICI:
 
             if key == self.actword[i].scritta[0]:
                 self.actword[i].scritta = self.actword[i].scritta[1:]
-            #     print("!")
-            # print(len(self.actword[i].scritta))
+
             return False
             
 
