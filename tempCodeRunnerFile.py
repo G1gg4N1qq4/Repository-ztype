@@ -1,1 +1,1 @@
-pr
+pygame.mixer.init(44100, -16, 7, 2048)

@@ -25,6 +25,7 @@ class NAVICELLA:
         self.bloccato = bloccato
         self.parola_agganciata = parola_agganciata
         self.punteggio_round = punteggio_round
+        self.shape = pygame.Rect(posx, posy, size[0], size[1])
     # def move(self):
     #     cont = 0
     #     if self.actposx < self.posx:
@@ -54,34 +55,36 @@ class NAVICELLA:
         self.img = pygame.transform.scale(self.img, self.size)
         
         # self.move()
-        if len(nem.actword) >0:
-            self.mira(nem)
+        if nem != None:
+            if len(nem.actword) >0:
+                self.mira(nem)
         self.screen.blit(self.img, (self.posx, self.posy))
         
-        lettera_presente = False
-        for i, parole in enumerate(nem.actword):
-            if self.parola_agganciata != None and parole.scritta[0] == nem.actword[self.parola_agganciata].scritta[0]:
-                lettera_presente = True
-                
-        if lettera_presente:
-            for i,proiettile in enumerate(self.muniz):
-                # ammo_img = pygame.image.load("immagini/navicella.png")
-                # pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
-                # pro.draw()
-                
-                # if pygame.Rect.collidepoint(nem.actword[proiettile.parola_agganciata].shape, proiettile.posx,proiettile.posy):
-                if (proiettile.centrato(nem, self.parola_agganciata)):
-                    self.muniz.pop(i)
-                    for i, nemico in enumerate(nem.actword):
-                        
-                        if nemico.scritta == nem.actword[self.parola_agganciata].scritta:
+        if nem!= None:
+            lettera_presente = False
+            for i, parole in enumerate(nem.actword):
+                if self.parola_agganciata != None and parole.scritta[0] == nem.actword[self.parola_agganciata].scritta[0]:
+                    lettera_presente = True
+                    
+            if lettera_presente:
+                for i,proiettile in enumerate(self.muniz):
+                    # ammo_img = pygame.image.load("immagini/navicella.png")
+                    # pro = AMMO(self.screen,ammo_img, (10, 5), self.actposx, self.actposy)
+                    # pro.draw()
+                    
+                    # if pygame.Rect.collidepoint(nem.actword[proiettile.parola_agganciata].shape, proiettile.posx,proiettile.posy):
+                    if (proiettile.centrato(nem, self.parola_agganciata)):
+                        self.muniz.pop(i)
+                        for i, nemico in enumerate(nem.actword):
                             
-                            # nem.colpito(i, proiettile.key)
-                            nem.actword[self.parola_agganciata].draw(proiettile.direction)
-                if proiettile.posx > 480*2 or proiettile.posx <0 or proiettile.posy >272*2 or proiettile.posy < 0:
-                    self.muniz.pop(i)
-                else:
-                    proiettile.draw()
+                            if nemico.scritta == nem.actword[self.parola_agganciata].scritta:
+                                
+                                # nem.colpito(i, proiettile.key)
+                                nem.actword[self.parola_agganciata].draw(proiettile.direction)
+                    if proiettile.posx > 480*2 or proiettile.posx <0 or proiettile.posy >272*2 or proiettile.posy < 0:
+                        self.muniz.pop(i)
+                    else:
+                        proiettile.draw()
         
     def shot(self, nem, key):
         lettera_presente = False
@@ -203,13 +206,16 @@ class NAVICELLA:
         # if(nem.actword[self.parola_agganciata].actposx - self.posx) <= nem.size[0]:
         #     if(nem.actword[self.parola_agganciata].actposx - self.posx) >= -nem.size[0]:
         #         return True 
+        if pygame.rect.Rect.colliderect(self.shape, nem.shape):
+            # print("!")
+            return True
         
-        if(nem.actposy - self.posy) >= - 5:
-            if(nem.actposy - self.posy) <= 5:
+        # if(nem.actposy - self.posy) >= - 5:
+        #     if(nem.actposy - self.posy) <= 5:
                 
-                if(nem.actposx - self.posx) >= - 5:
-                    if(nem.actposx - self.posx) <= 5:
-                        return True
+        #         if(nem.actposx - self.posx) >= - 5:
+        #             if(nem.actposx - self.posx) <= 5:
+        #                 return True
             
     def colpita(self):
 

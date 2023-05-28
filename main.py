@@ -11,8 +11,8 @@ from pygame.locals import *
 # from nemici import Nemici
 import os
 os.system('cls')
+pygame.mixer.init(44100, -16, 30, 2048)
 pygame.init()
-pygame.mixer.init(44100, -16, 7, 2048)
 
 
 window_size = (480*2, 272*2)
@@ -105,8 +105,10 @@ def action(nav, nemici):
                 nav.punteggio_round[1] = False
             else:
                 nav.shot(nemici, key)
-
+                
+                shot_sound.play()
                 timer = 0
+                
         
         tempomax = 360
         if pygame.key.get_pressed()[K_RETURN]:
@@ -257,7 +259,6 @@ def bottone_quitta():
 
 menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
 menu_sound.set_volume(5)
-explsound = pygame.mixer.Sound("audio/explosionmusic.wav")
 menu_sound.play(-1)
 giocare = False
 sfon1 = sfondo_immagine 
@@ -295,8 +296,11 @@ while not giocare:
     
     pygame.display.update()
 
+pygame.mixer.quit()
+pygame.mixer.init()
+shot_sound = pygame.mixer.Sound("audio/shot.mp3")
+explsound = pygame.mixer.Sound("audio/explosionmusic.wav")
 menu_sound.stop()
-
 #animazione iniziale
 start(screen, n, sfondo_immagine, sfondo_immagine2, nem)
 sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
@@ -340,14 +344,25 @@ while True:
             
             action(n,nem)
             
+            #Disegno dei nemici
+            n.draw(nem)
+            
+            #Aggiornamento punteggio totale
+            if n.punteggio_round[1]:
+                punteggio += n.punteggio_round[0]
+            
+            #Azione nemico
+            nem.draw()
+            
         
         else:
             main_music.stop()
             sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
             sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
             n.img = pygame.image.load("immagini/Exp.png")
-            
             explsound.play(0,0,0)
+            n.draw(nem)
+            
             
             sconfitta = font2.render("HAI PERSO", True, (200,20,20), None)
             sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
@@ -373,15 +388,6 @@ while True:
         vittoria = controlla_vittoria(nem)
 
 
-    #Disegno dei nemici
-    n.draw(nem)
-    
-    #Aggiornamento punteggio totale
-    if n.punteggio_round[1]:
-        punteggio += n.punteggio_round[0]
-    
-    #Azione nemico
-    nem.draw()
     pygame.display.flip()
     clock.tick(fps)
 

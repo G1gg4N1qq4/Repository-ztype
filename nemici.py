@@ -79,12 +79,16 @@ class NEMICI:
 
                     img = font.render(parol.scritta, True, (200,200,200, 180), None)
                     img = pygame.transform.scale(img,(img.get_width()/4, img.get_height()/4))
+                    parol.shape = pygame.Rect(parol.actposx - img.get_width()/8 , parol.actposy - img.get_height()/8,
+                                              img.get_width()/4, img.get_height()/4 )
                     self.screen.blit(img,(parol.actposx, parol.actposy))
         else:
             for parol in self.actword:
 
                 img = font.render(parol.scritta, True, (200,200,200, 180), None)
-                img = pygame.transform.scale(img,self.size)
+                img = pygame.transform.scale(img,(img.get_width()/4, img.get_height()/4))
+                parol.shape = pygame.Rect(parol.actposx - img.get_width()/8 , parol.actposy - img.get_height()/8, 
+                                          img.get_width()/4, img.get_height()/4 )
                 self.screen.blit(img,(parol.actposx, parol.actposy))
                         
 
@@ -107,7 +111,7 @@ class NEMICI:
 
 class parola:
     def __init__(self, screen, scritta, actposx, actposy, posx,posy,
-                 speed = 1.5) -> None:
+                 speed = 1.5, shape = None) -> None:
         
         #variabili display
         self.screen = screen
@@ -120,6 +124,7 @@ class parola:
         self.actposx = actposx
         self.actposy = actposy
         self.speed = speed
+        self.shape = pygame.Rect(actposx, actposy, 0.5,0.5)
         
         
     def move(self, extspeed = None):
@@ -150,7 +155,6 @@ class parola:
                     self.actposy = self.actposy - (0.2 *self.speed)
                     # cont += 0.2
 
-        # self.shape = pygame.rect.Rect(self.actposx , self.actposy, self.size[0], self.size[1]/40 )
         
     def draw(self, extspeed = None):
 

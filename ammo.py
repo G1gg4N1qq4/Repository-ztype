@@ -10,6 +10,7 @@ class AMMO:
         self.size = size
         self.posx = posx
         self.posy = posy
+        self.shape = pygame.Rect(posx,posy,size[0], size[1])
 
         self.direction = direction
         # self.parola_agganciata = parola_agganciata
@@ -18,6 +19,7 @@ class AMMO:
     def move(self):
         self.posy -= self.direction[1]/10
         self.posx -= self.direction[0]/10
+        self.shape = pygame.Rect(self.posx, self.posy, self.size[0], self.size[1])
         
     # rotazione di prova
     def ruota(self, nemico):
@@ -44,10 +46,13 @@ class AMMO:
         # if(nem.actword[self.parola_agganciata].actposx - self.posx) <= nem.size[0]:
         #     if(nem.actword[self.parola_agganciata].actposx - self.posx) >= -nem.size[0]:
         #         return True 
-        
-        if(nem.actword[parola_agganciata].actposy - self.posy) >= - nem.size[1]:
-            if(nem.actword[parola_agganciata].actposy - self.posy) <= nem.size[1]:
-                return True
+        if pygame.Rect.colliderect(self.shape, nem.actword[parola_agganciata].shape):
+            # print("!!")
+            return True
+            
+        # if(nem.actword[parola_agganciata].actposy - self.posy) >= - nem.size[1]:
+        #     if(nem.actword[parola_agganciata].actposy - self.posy) <= nem.size[1]:
+        #         return True
             
             
             
