@@ -12,7 +12,7 @@ from pygame.locals import *
 import os
 os.system('cls')
 pygame.init()
-
+pygame.mixer.init(44100, -16, 7, 2048)
 
 
 window_size = (480*2, 272*2)
@@ -224,7 +224,7 @@ punteggio = 0
 vittoria = False
 special_shot = 3
 main_music = pygame.mixer.Sound("audio/mainmusic.mp3")
-
+main_music.set_volume(0.3)
 
 
 #bottone di play
@@ -256,6 +256,8 @@ def bottone_quitta():
     disegna_testo_centrale("Esci", font, WHITE, screen, window_size[0]//2, window_size[1]//2 + 160)
 
 menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
+menu_sound.set_volume(5)
+explsound = pygame.mixer.Sound("audio/explosionmusic.wav")
 menu_sound.play(-1)
 giocare = False
 sfon1 = sfondo_immagine 
@@ -334,15 +336,18 @@ while True:
                 if n.centrata(nemico):
                     n.draw(nem)
                     n.colpita()
+
             
             action(n,nem)
             
         
         else:
+            main_music.stop()
             sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
             sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
             n.img = pygame.image.load("immagini/Exp.png")
             
+            explsound.play(0,0,0)
             
             sconfitta = font2.render("HAI PERSO", True, (200,20,20), None)
             sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))

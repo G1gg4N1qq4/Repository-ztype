@@ -212,8 +212,7 @@ class NAVICELLA:
                         return True
             
     def colpita(self):
-        explsound = pygame.mixer.Sound("audio/explosionmusic.wav")
-        explsound.play(0,0,0)
+
         self.bloccato = True
         
 
