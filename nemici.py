@@ -35,8 +35,8 @@ class NEMICI:
             word = random.choice(self.parole)
             for p in self.actword:
                 while word[0] == p.scritta[0]:
-
                     word = random.choice(self.parole)
+                    print(p.scritta, word)
                 
                 while posx == p.actposx:
                     posx = random.randint(0,window_size[0])
@@ -44,8 +44,14 @@ class NEMICI:
                 while posy == p.actposy:
                     posy = random.randint(0,100)
 
+            if len(word) >= 5:
+                speed = 0.4
+            elif len(word) > 2:
+                speed = 0.45
+            else:
+                speed = 0.6
             self.actword.append(parola(self.screen,word, posx, 
-                                    posy , self.direction[0], self.direction[1]))
+                                    posy , self.direction[0], self.direction[1], speed))
             
             for i,parol in enumerate(self.actword):
                 while self.actword[-1].scritta == parol.scritta and i != len(self.actword)-1:
@@ -77,10 +83,14 @@ class NEMICI:
                 else: 
                     parol.draw()
 
-                    img = font.render(parol.scritta, True, (200,200,200, 180), None)
+                    img = font.render(parol.scritta, True, (200,200,200), None)
                     img = pygame.transform.scale(img,(img.get_width()/4, img.get_height()/4))
+                    rect = pygame.Surface((img.get_width() +10, img.get_height()+ 1), pygame.SRCALPHA)
+                    pygame.draw.rect(rect, (100, 0, 100, 80), pygame.Rect(0, 0, rect.get_width(), rect.get_height()))
+                    self.screen.blit(rect, (parol.actposx - 5, parol.actposy - 0.5))
                     parol.shape = pygame.Rect(parol.actposx - img.get_width()/8 , parol.actposy - img.get_height()/8,
                                               img.get_width()/4, img.get_height()/4 )
+                    
                     self.screen.blit(img,(parol.actposx, parol.actposy))
         else:
             for parol in self.actword:
@@ -92,7 +102,7 @@ class NEMICI:
                 self.screen.blit(img,(parol.actposx, parol.actposy))
                         
 
-# DA SISTEMARE IL PUNTEGGIO QUA SOTTO E NELLA LINEA 144 DI NAVICELLA
+
     def colpito(self,i, key , nav):
         if len(self.actword[i].scritta) <= 1:
             self.actword.pop(i)
@@ -111,7 +121,7 @@ class NEMICI:
 
 class parola:
     def __init__(self, screen, scritta, actposx, actposy, posx,posy,
-                 speed = 1.5, shape = None) -> None:
+                 speed = 1.5) -> None:
         
         #variabili display
         self.screen = screen
@@ -138,21 +148,21 @@ class parola:
             # cont = 0
             if self.actposx < self.posx:
                 if self.actposx != self.posx :
-                    self.actposx = self.actposx + 0.1
+                    self.actposx = self.actposx + 0.3*self.speed *window_size[0]/window_size[1]
                     # cont += 0.2
             elif self.actposx > self.posx:
                 if self.actposx != self.posx :
-                    self.actposx = self.actposx - 0.1
+                    self.actposx = self.actposx - 0.3*self.speed *window_size[0]/window_size[1]
                     # cont += 0.2
             
             # cont = 0
             if self.actposy < self.posy:
                 if self.actposy != self.posy :
-                    self.actposy = self.actposy + (0.2*self.speed)
+                    self.actposy = self.actposy + (1.3*self.speed) *window_size[1]/window_size[0] 
                     # cont += 0.2
             elif self.actposy > self.posy:
                 if self.actposy != self.posy :
-                    self.actposy = self.actposy - (0.2 *self.speed)
+                    self.actposy = self.actposy - (1.3 *self.speed)  *window_size[1]/window_size[0]
                     # cont += 0.2
 
         

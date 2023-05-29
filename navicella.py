@@ -52,6 +52,7 @@ class NAVICELLA:
 
         
     def draw(self, nem = None):
+
         self.img = pygame.transform.scale(self.img, self.size)
         
         # self.move()
@@ -89,7 +90,6 @@ class NAVICELLA:
     def shot(self, nem, key):
         lettera_presente = False
         parola_trovata = False
-        self.punteggio_round[1] = False
             
         if self.parola_agganciata != None and nem.actword[self.parola_agganciata].scritta == " ":
             nem.actword.pop(self.parola_agganciata)
@@ -173,6 +173,9 @@ class NAVICELLA:
                         [self.posx - nem.actword[self.parola_agganciata].actposx, self.posy - nem.actword[self.parola_agganciata].actposy])
                 
                 self.muniz.append(pro)
+                # shot_sound.play(0,0,0)
+                # pygame.mixer.quit()
+                # pygame.mixer.init()
         else:
             pass
     

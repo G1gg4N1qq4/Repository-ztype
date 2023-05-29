@@ -31,25 +31,28 @@ clock = pygame.time.Clock()
 fps = 60
 timer = 333333
 
+punteggio = 0
 
 
-def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
-    global sfon1, sfon2, posy1,posy2
+
+def start(screen, nav, sfondo1, sfondo2, nemici, level = 1):
+    global sfon1, sfon2, posy1,posy2, sfondo_immagine2
     nem.parole = carica_livello(level)
     rocket_sound = pygame.mixer.Sound("audio/rocket-engine.mp3")
     rocket_sound.play(-1,0,0)
 
-    if leveling:
+    if level > 1:
         nemici.maxnem += 2
-        nemici.counter = 0
+    nemici.counter = 0
     
     nemici.aggiungi_parola()
 
     while nav.posy > 0:
-        posy1,posy2 = moving_background(screen, sfon1, sfon2, posy1, posy2)
-
+        if level <= 1:
+            posy1,posy2 = moving_background(screen, sfon1, sfon2, posy1, posy2)
+        else:
+            screen.blit(sfondo_immagine2,(0,0))
         nav.posy -= 5
-        # screen.blit(sfondo1,(0,0))
 
         nav.img = pygame.transform.scale(nav.img, nav.size)
         screen.blit(nav.img, (nav.posx + nav.size[0]/2, nav.posy + nav.size[1]/2))
@@ -59,6 +62,7 @@ def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
     nav.posy = window_size[1]
     
     arrival = pygame.mixer.Sound("audio/arrival.mp3")
+    rocket_sound.stop()
     arrival.play(-1,0,0)
 
     while nav.posy != window_size[1] - 100:
@@ -70,7 +74,6 @@ def start(screen, nav, sfondo1, sfondo2, nemici, leveling = False):
         pygame.display.flip()
         clock.tick(fps)
 
-    rocket_sound.stop()
     arrival.stop()
 
 
@@ -105,9 +108,10 @@ def action(nav, nemici):
                 nav.punteggio_round[1] = False
             else:
                 nav.shot(nemici, key)
+                # nav.punteggio_round[1] = False
                 
-                shot_sound.play()
                 timer = 0
+                return True, False
                 
         
         tempomax = 360
@@ -120,44 +124,35 @@ def action(nav, nemici):
                     special_shot -= 1
                     
                     timer = 0
+                    return False, True
 
+    return False, False
 
-
-def continua(altezza0, destra):
-    conti_img = "CONTINUARE?"
-    conti_img = font2.render(conti_img, True, (100,0,0))
-    conti_img = pygame.transform.scale(conti_img, ((conti_img.get_width()*window_size[1]/conti_img.get_height())/10,
-                                                   window_size[1]/10))
-    screen.blit(conti_img,((window_size[0] - conti_img.get_width())/2, altezza0 + 10))
-    
-    si = "SI"
-    no = "No"
-    if not destra:
-        si = font.render(si, True, (0,100,0), (250,250,250))
-    else:
-        si = font.render(si, True, (0,100,0))
-    si = pygame.transform.scale(si, ((si.get_width()*window_size[1]/si.get_height())/20,
+def continua(altezza0):
+    conti_img = "Ritornare alla Home?"
+    conti_img = font3.render(conti_img, True, (180,180, 180))
+    conti_img = pygame.transform.scale(conti_img, ((conti_img.get_width()*window_size[1]/conti_img.get_height())/20,
                                                    window_size[1]/20))
-    screen.blit(si,((window_size[0]/2 - si.get_width()*2 - 5), altezza0 + 10 + conti_img.get_height() + 10))
+    rect = pygame.Surface((conti_img.get_width() +10, conti_img.get_height() + 10), pygame.SRCALPHA)
+    pygame.draw.rect(rect, (0, 0, 0, 140), pygame.Rect(0, 0, rect.get_width(), rect.get_height()))
+    screen.blit(rect, ((window_size[0] - conti_img.get_width())/2 - 5, altezza0 + conti_img.get_height()/2 + 40 - 5 ))
+    screen.blit(conti_img,((window_size[0] - conti_img.get_width())/2, altezza0 + conti_img.get_height()/2 + 40 ))
     
-    if destra:
-        no = font.render(no, True, (0,100,0), (250,250,250))
-    else:
-        no = font.render(no, True, (0,100,0))
-        
-    no = pygame.transform.scale(no, ((no.get_width()*window_size[1]/no.get_height())/20,
-                                                   window_size[1]/20))
-    screen.blit(no,((window_size[0]/2 + si.get_width()*2 - no.get_width() + 5), altezza0 + 10 + conti_img.get_height() + 10))
 
 
 
-
-def reset(navicella, nemici, destra):
+def reset(navicella, nemici, destra, leveling = True):
     global punteggio
+
     if not destra:
-        navicella = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
-                    window_size[0]/2 - 50, window_size[1] - 100)
-        nemici = NEMICI(screen, (window_size[0]/30, window_size[1]/40) ,(posx,posy))
+        if leveling:
+            nemici = NEMICI(screen, (window_size[0]/30, window_size[1]/40) ,(posx,posy),0,None, nemici.maxnem)
+            navicella = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
+                        window_size[0]/2 - 50, window_size[1] - 100)
+        else:
+            navicella = NAVICELLA(screen, immagine_navicella, (50,50), pygame.rect.Rect(window_size[0]/2, window_size[1]/2, 50, 50), 
+                        window_size[0]/2 - 50, window_size[1] - 100)
+            nemici = NEMICI(screen, (window_size[0]/30, window_size[1]/40) ,(posx,posy))
         
         return navicella, nemici
     else:
@@ -204,6 +199,7 @@ sfondo_immagine3 = pygame.image.load('immagini/sfondo2.jpg')
 sfondo_immagine3 = pygame.transform.scale(sfondo_immagine3, window_size)
 
 
+
 #set navicella
 immagine_navicella = pygame.image.load('immagini/navicella.png')
 # pos = pygame.mouse.get_pos()
@@ -247,7 +243,7 @@ def bottone_gioca():
 def bottone_quitta():
     button_width = 150
     button_height = 50
-    button_x = screen_width // 2 - button_width // 2
+    button_x = screen_width // 2 - button_width // 2 
     button_y = screen_height // 2 - button_height // 2 + 160
 
     play_button = pygame.Surface((button_width, button_height), pygame.SRCALPHA)
@@ -257,62 +253,92 @@ def bottone_quitta():
     screen.blit(play_button, (button_x, button_y))
     disegna_testo_centrale("Esci", font, WHITE, screen, window_size[0]//2, window_size[1]//2 + 160)
 
-menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
-menu_sound.set_volume(5)
-menu_sound.play(-1)
-giocare = False
+def bottone_home():
+    button_width = 150
+    button_height = 50
+    button_x = screen_width // 2 - button_width // 2
+    button_y = screen_height // 2 - button_height // 2 + 100
+
+    play_button = pygame.Surface((button_width, button_height), pygame.SRCALPHA)
+    pygame.draw.rect(play_button, (0, 0, 0, 180), pygame.Rect(0, 0, button_width, button_height))
+    pygame.draw.rect(play_button, WHITE, pygame.Rect(0, 0, button_width, button_height), 3)
+
+    screen.blit(play_button, (button_x, button_y))
+    disegna_testo_centrale("Home", font, WHITE, screen, window_size[0]//2, window_size[1]//2 + 100)
+
+    
+    
+# menu_sound.play(-1)
 sfon1 = sfondo_immagine 
 sfon1 = pygame.transform.scale(sfondo_immagine, window_size)
 sfon2 = sfon1
 posy1 = 0
 posy2 = window_size[1]
 
-while not giocare:
-    # screen.blit(sfondo_immagine, (0,0))
-    posy1,posy2 = moving_background(screen, sfon1, sfon2, posy1, posy2)
-    bottone_gioca()
-    bottone_quitta()
-    disegna_testo_centrale("Benvenuto", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 130)
-    disegna_testo_centrale("in", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 75)
-    disegna_testo_centrale("ZTY.PE", font3, WHITE, screen, window_size[0]//2, window_size[1]//2)
-    n.img = pygame.transform.scale(n.img, n.size)
-    screen.blit(n.img, (n.posx + n.size[0]/2 , n.posy + n.size[1]/2 + 10))
-
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 160, 150, 50)
-            if button_rect.collidepoint(mouse_pos):
-                pygame.quit()
-                sys.exit() 
-            else:
-                mouse_pos = pygame.mouse.get_pos()
-                button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 100, 150, 50)
-                if button_rect.collidepoint(mouse_pos):
-                    giocare = True
+def schermata_iniziale():
+    global screen, sfon1, sfon2, posy1, posy2, window_size, WHITE
+    global font, font2, font3, n, punteggio, menu_sound
+    giocare = False
+    pygame.mixer.init()
+    menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
+    menu_sound.set_volume(5)
+    menu_sound.play(-1)
     
-    pygame.display.update()
+    while not giocare:
+        # screen.blit(sfondo_immagine, (0,0))
+        posy1,posy2 = moving_background(screen, sfon1, sfon2, posy1, posy2)
+        bottone_gioca()
+        bottone_quitta()
+        disegna_testo_centrale("Benvenuto", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 130)
+        disegna_testo_centrale("in", font2, WHITE, screen, window_size[0]//2, window_size[1]//2 - 75)
+        disegna_testo_centrale("ZTY.PE", font3, WHITE, screen, window_size[0]//2, window_size[1]//2)
+        n.img = pygame.transform.scale(n.img, n.size)
+        screen.blit(n.img, (n.posx + n.size[0]/2 , n.posy + n.size[1]/2 + 10))
 
-pygame.mixer.quit()
-pygame.mixer.init()
-shot_sound = pygame.mixer.Sound("audio/shot.mp3")
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 160, 150, 50)
+                if button_rect.collidepoint(mouse_pos):
+                    pygame.quit()
+                    sys.exit() 
+                else:
+                    mouse_pos = pygame.mouse.get_pos()
+                    button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 100, 150, 50)
+                    if button_rect.collidepoint(mouse_pos):
+                        giocare = True
+        
+        pygame.display.update()
+    menu_sound.stop()
+    start(screen, n, sfondo_immagine, sfondo_immagine2, nem)
+    punteggio = 0
+    # pygame.mixer.quit()
+    # pygame.mixer.init()
+
+
+
+schermata_iniziale()
+# shot_sound = pygame.mixer.Sound("audio/shot.mp3")
 explsound = pygame.mixer.Sound("audio/explosionmusic.wav")
-menu_sound.stop()
 #animazione iniziale
-start(screen, n, sfondo_immagine, sfondo_immagine2, nem)
 sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
 sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-
+livello = 1
+tempo = 0
 while True:
     #Costruzione sfondo con parola digitata e punteggio
     screen.blit(sfondo_immagine, (0,0))
-    disegna_testo(f"Parola: ", (10, 10))
+    disegna_testo(f"Level: {livello}", (10, 10))
     disegna_testo(f"Punteggio: {punteggio}", (10, 50))
     disegna_testo(f"Electric Camp: {special_shot}", (10, 90))
+    main_music.set_volume(0.1)
+    explsound.set_volume(0.1)
     main_music.play(-1,0,0)
+    # shot_sound.play(-1,0,0)
+    
 
     # gestione inputs
     for event in pygame.event.get():
@@ -322,10 +348,13 @@ while True:
 
     #controllo vittoria
     if vittoria:
-        n, nem = reset(n,nem,False)
+        livello += 1
+        n.muniz = []
+        n, nem = reset(n,nem,False, True)
+        n.punteggio_round[1] = False
         sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
         sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-        start(screen, n, sfondo_immagine2, sfondo_immagine, nem, True)
+        start(screen, n, sfondo_immagine2, sfondo_immagine, nem, livello)
         sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
         sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
         vittoria = False
@@ -335,14 +364,21 @@ while True:
 
     else:
         if not n.bloccato:
-
             for i,nemico in enumerate(nem.actword):
                 if n.centrata(nemico):
                     n.draw(nem)
                     n.colpita()
 
             
-            action(n,nem)
+            action(n,nem)[0]
+            # il suono dello spare rallenta il gioco a causa di quit() e init()
+                # shot_sound.stop
+                # pygame.mixer.quit()
+                # pygame.mixer.init()
+
+                
+            
+            
             
             #Disegno dei nemici
             n.draw(nem)
@@ -350,6 +386,7 @@ while True:
             #Aggiornamento punteggio totale
             if n.punteggio_round[1]:
                 punteggio += n.punteggio_round[0]
+                n.punteggio_round[1] = False
             
             #Azione nemico
             nem.draw()
@@ -364,26 +401,36 @@ while True:
             n.draw(nem)
             
             
-            sconfitta = font2.render("HAI PERSO", True, (200,20,20), None)
-            sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/5,(window_size[1]/5)))
-            screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1] - sconfitta.get_height())/2 )) 
+            sconfitta = font3.render("game over", True, (200,20,20), None)
+            sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/7,(window_size[1]/7)))
+            screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1]/2 - sconfitta.get_height())))   
             
-            if pygame.key.get_pressed()[K_RIGHT]:
-                destra = True
+            continua( (window_size[1]/2 - sconfitta.get_height()/2))
+            bottone_home()
+            bottone_quitta()
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 160, 150, 50)
+                    if button_rect.collidepoint(mouse_pos):
+                        pygame.quit()
+                        sys.exit() 
+                    else:
+                        mouse_pos = pygame.mouse.get_pos()
+                        button_rect = pygame.Rect(screen_width // 2 - 75, screen_height // 2 - 25 + 100, 150, 50)
+                        if button_rect.collidepoint(mouse_pos):
+                            pygame.mixer.quit()
+                            n, nem = reset(n,nem,destra)
+                            schermata_iniziale()
             
-            if pygame.key.get_pressed()[K_LEFT]:
-                destra = False
-            
-            continua( (window_size[1]+ sconfitta.get_height())/2, destra)
-            
-            if pygame.key.get_pressed()[K_RETURN]:
-                n, nem = reset(n,nem,destra)
-                sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
-                sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-                start(screen, n, sfondo_immagine2, sfondo_immagine, nem)
-                sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
-                sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
-                punteggio = 0
+                # sfondo_immagine = pygame.image.load("immagini/sfondo.jpg")
+                # sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
+                # start(screen, n, sfondo_immagine2, sfondo_immagine, nem)
+                # sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
+                # sfondo_immagine = pygame.transform.scale(sfondo_immagine, window_size)
             
         vittoria = controlla_vittoria(nem)
 
