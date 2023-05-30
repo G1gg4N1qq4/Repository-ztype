@@ -109,7 +109,7 @@ def action(nav, nemici):
             else:
                 nav.shot(nemici, key)
                 # nav.punteggio_round[1] = False
-                shot_sound.play(-1,0,0)
+                shot_sound.play(0,0,0)
                 timer = 0
                 return True, False
                 
@@ -370,7 +370,7 @@ while True:
                     n.colpita()
 
             
-            action(n,nem)[0]
+            action(n,nem)
             # il suono dello spare rallenta il gioco a causa di quit() e init()
                 # shot_sound.stop
                 # pygame.mixer.quit()
@@ -404,7 +404,7 @@ while True:
             sconfitta = font3.render("game over", True, (200,20,20), None)
             sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/7,(window_size[1]/7)))
             screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1]/2 - sconfitta.get_height())))   
-            
+            livello = 0
             continua( (window_size[1]/2 - sconfitta.get_height()/2))
             bottone_home()
             bottone_quitta()
