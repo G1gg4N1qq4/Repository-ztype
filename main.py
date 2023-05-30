@@ -38,7 +38,7 @@ punteggio = 0
 def start(screen, nav, sfondo1, sfondo2, nemici, level = 1):
     global sfon1, sfon2, posy1,posy2, sfondo_immagine2
     nem.parole = carica_livello(level)
-    rocket_sound = pygame.mixer.Sound("audio/rocket-engine.mp3")
+    rocket_sound = pygame.mixer.Sound("audio/rocket-engine.wav")
     rocket_sound.play(-1,0,0)
 
     if level > 1:
@@ -61,7 +61,7 @@ def start(screen, nav, sfondo1, sfondo2, nemici, level = 1):
     
     nav.posy = window_size[1]
     
-    arrival = pygame.mixer.Sound("audio/arrival.mp3")
+    arrival = pygame.mixer.Sound("audio/arrival.wav")
     rocket_sound.stop()
     arrival.play(-1,0,0)
 
@@ -109,7 +109,7 @@ def action(nav, nemici):
             else:
                 nav.shot(nemici, key)
                 # nav.punteggio_round[1] = False
-                
+                shot_sound.play(-1,0,0)
                 timer = 0
                 return True, False
                 
@@ -221,7 +221,7 @@ level = 1
 punteggio = 0
 vittoria = False
 special_shot = 3
-main_music = pygame.mixer.Sound("audio/mainmusic.mp3")
+main_music = pygame.mixer.Sound("audio/mainmusic.wav")
 main_music.set_volume(0.3)
 
 
@@ -280,7 +280,7 @@ def schermata_iniziale():
     global font, font2, font3, n, punteggio, menu_sound
     giocare = False
     pygame.mixer.init()
-    menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
+    menu_sound = pygame.mixer.Sound("audio/start_menu_audio.wav")
     menu_sound.set_volume(5)
     menu_sound.play(-1)
     
@@ -321,7 +321,7 @@ def schermata_iniziale():
 
 
 schermata_iniziale()
-# shot_sound = pygame.mixer.Sound("audio/shot.mp3")
+shot_sound = pygame.mixer.Sound("audio/shot.wav")
 explsound = pygame.mixer.Sound("audio/explosionmusic.wav")
 #animazione iniziale
 sfondo_immagine = pygame.image.load("immagini/sfondo2.jpg")
@@ -337,7 +337,7 @@ while True:
     main_music.set_volume(0.1)
     explsound.set_volume(0.1)
     main_music.play(-1,0,0)
-    # shot_sound.play(-1,0,0)
+
     
 
     # gestione inputs
