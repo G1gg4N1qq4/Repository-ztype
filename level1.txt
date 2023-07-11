@@ -68,7 +68,7 @@ sapore
 colore
 stella
 luna
-città
+citta
 strada
 ponte
 porta
