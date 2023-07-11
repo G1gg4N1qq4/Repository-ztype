@@ -117,8 +117,14 @@ def show_scores(name, score):
     while not finished:
         screen.blit(sfondo_immagine, (0,0))
         for event in pygame.event.get():
-            if pygame.key.get_pressed()[K_RETURN]:
-                finished = True
+            
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            
+        if pygame.key.get_pressed()[K_RETURN]:
+            finished = True
+            
         
         
         g.draw()
