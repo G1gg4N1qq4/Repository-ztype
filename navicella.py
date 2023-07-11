@@ -181,10 +181,9 @@ class NAVICELLA:
     
     
     def big_shot(self, nemici):
-        for i,par in enumerate(nemici.actword):
-            if par.actposy >= 280:
-                nemici.actword.pop(i)
-                    
+        while (len(nemici.actword) > 0):
+            for i,par in enumerate(nemici.actword):
+                nemici.actword.pop(i)       
     def mira(self, nemici):
         if self.parola_agganciata != None:
             for proiettile in self.muniz:

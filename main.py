@@ -136,7 +136,7 @@ def show_scores(name, score):
 def start(screen, nav, sfondo1, sfondo2, nemici, level = 1):
     global sfon1, sfon2, posy1,posy2, sfondo_immagine2
     nem.parole = carica_livello(level)
-    rocket_sound = pygame.mixer.Sound("audio/rocket-engine.mp3")
+    rocket_sound = pygame.mixer.Sound("audio/rocket-engine.wav")
     rocket_sound.play(-1,0,0)
 
     if level > 1:
@@ -159,7 +159,7 @@ def start(screen, nav, sfondo1, sfondo2, nemici, level = 1):
     
     nav.posy = window_size[1]
     
-    arrival = pygame.mixer.Sound("audio/arrival.mp3")
+    arrival = pygame.mixer.Sound("audio/arrival.wav")
     rocket_sound.stop()
     arrival.play(-1,0,0)
 
@@ -397,7 +397,7 @@ def schermata_iniziale():
     global font, font2, font3, n, punteggio, menu_sound
     giocare = False
     pygame.mixer.init()
-    menu_sound = pygame.mixer.Sound("audio/start_menu_audio.mp3")
+    menu_sound = pygame.mixer.Sound("audio/start_menu_audio.wav")
     menu_sound.set_volume(5)
     menu_sound.play(-1)
     
@@ -459,6 +459,7 @@ while True:
     main_music.set_volume(0.1)
     explsound.set_volume(0.3)
     main_music.play(-1,0,0)
+
 
     
 
@@ -525,7 +526,7 @@ while True:
             sconfitta = font3.render("game over", True, (200,20,20), None)
             sconfitta = pygame.transform.scale(sconfitta,((sconfitta.get_width()*window_size[1]/sconfitta.get_height())/7,(window_size[1]/7)))
             screen.blit(sconfitta, ((window_size[0] - sconfitta.get_width())/2, (window_size[1]/2 - sconfitta.get_height())))   
-            
+            livello = 0
             continua( (window_size[1]/2 - sconfitta.get_height()/2))
             bottone_home()
             bottone_quitta()
