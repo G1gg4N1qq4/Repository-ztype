@@ -1,7 +1,5 @@
 devel: 200
 The Best: 90
-AC/DC: 10
+Ryan: 69
 abry: 5
-sborbus: 0
-u: 0
-u: 0
+

@@ -5,10 +5,10 @@ window_size = (480*2, 272*2)
 import random
 
 pygame.font.init()
-# font = pygame.font.SysFont(pygame.font.get_default_font(),int(window_size[1]), bold = False, italic = True)
 font = pygame.font.Font("fonts/eElectroBox.ttf", 120)
 
 class NEMICI:
+    # inizializzazione classe NEMICI
     def __init__(self, screen, size , direction, counter = 0, actword = None, maxnem = 5) -> None:
         
         self.screen = screen
@@ -16,19 +16,16 @@ class NEMICI:
         self.size = size
         self.direction = direction
         self.maxnem = maxnem
-        # if parole == None or type(parole) != list:
         self.parole = []
-        # else:
-        #     self.parole = parole
+        
         if actword == None or type(actword) != list:
             self.actword = []
         else:
             self.actword = actword
-        
     
+    # assocazione di una parola ad un "nemico" e aggiunta dello stesso alla totalità dei nemici
     def aggiungi_parola(self):
-
-            # for i in range(self.counter):
+        
         while self.counter <= self.maxnem:
             posx = random.randint(0,window_size[0])
             posy = random.randint(0,100)
@@ -60,18 +57,16 @@ class NEMICI:
             self.counter +=1
 
 
-    
+
     def draw(self, proiettile = None):
         
-
         for parol in self.actword:
             if parol.actposy > window_size[1]:
                 for elem in self.actword:
                     if elem.scritta == parol.scritta:
                         self.actword.remove(elem)
 
-                
-                
+
         if proiettile == None:
             for parol in self.actword:
                 if parol.posy > window_size[1]:
@@ -79,7 +74,7 @@ class NEMICI:
                         if elem.scritta == parol.scritta:
                             self.actword.remove(elem)
                             self.counter -= 1
-                    
+                
                 else: 
                     parol.draw()
 
@@ -100,24 +95,21 @@ class NEMICI:
                 parol.shape = pygame.Rect(parol.actposx - img.get_width()/8 , parol.actposy - img.get_height()/8, 
                                           img.get_width()/4, img.get_height()/4 )
                 self.screen.blit(img,(parol.actposx, parol.actposy))
-                        
+
 
 
     def colpito(self,i, key , nav):
         if len(self.actword[i].scritta) <= 1:
             self.actword.pop(i)
-            # self.parole.pop(i)
-            # self.counter -=1
             nav.parola_agganciata = None
-            # nav.punteggio_round = [0, False]
+            
             return True
         else:
 
             if key == self.actword[i].scritta[0]:
                 self.actword[i].scritta = self.actword[i].scritta[1:]
-
             return False
-            
+
 
 class parola:
     def __init__(self, screen, scritta, actposx, actposy, posx,posy,
@@ -126,8 +118,7 @@ class parola:
         #variabili display
         self.screen = screen
         self.scritta = scritta
-        # self.size = size
-        # self.shape = pygame.rect.Rect(posx, posy, size[0], size[1]/40)
+        
         #variabili cinematica
         self.posx = posx
         self.posy = posy
@@ -142,30 +133,27 @@ class parola:
         if extspeed != None:
             self.actposx = self.actposx - extspeed[0]/10
             self.actposy = self.actposy - extspeed[1]/5
-            # self.actposx = self.posx
-            # self.actposy = self.actposy + self.speed
+            
         else:
-            # cont = 0
+            
             if self.actposx < self.posx:
                 if self.actposx != self.posx :
                     self.actposx = self.actposx + 0.3*self.speed *window_size[0]/window_size[1]
-                    # cont += 0.2
+            
             elif self.actposx > self.posx:
                 if self.actposx != self.posx :
                     self.actposx = self.actposx - 0.3*self.speed *window_size[0]/window_size[1]
-                    # cont += 0.2
             
-            # cont = 0
+            
             if self.actposy < self.posy:
                 if self.actposy != self.posy :
                     self.actposy = self.actposy + (1.3*self.speed) *window_size[1]/window_size[0] 
-                    # cont += 0.2
+            
             elif self.actposy > self.posy:
                 if self.actposy != self.posy :
                     self.actposy = self.actposy - (1.3 *self.speed)  *window_size[1]/window_size[0]
-                    # cont += 0.2
 
-        
+
+
     def draw(self, extspeed = None):
-
         self.move(extspeed)
